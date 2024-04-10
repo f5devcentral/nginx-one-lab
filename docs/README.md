@@ -76,7 +76,7 @@ comfortable accessing resources in UDF using SSH.
 NGINX One uses an agent installed alongside NGINX to communicate with
 the NGINX One service.
 
-    ![There are two instances in the customer environment: one Plus and one OSS. An additional NGINX Agent is installed alongside NGINX in each instance, and the Agent communicates between the NGINX instance and the NGINX One service.](media/image5.png)
+![There are two instances in the customer environment: one Plus and one OSS. An additional NGINX Agent is installed alongside NGINX in each instance, and the Agent communicates between the NGINX instance and the NGINX One service.](media/image5.png)
 
 The agent uses a Data Plane Key to authenticate and identify itself to
 NGINX One. In this lab we will create a new Data Plane Key, and use it
