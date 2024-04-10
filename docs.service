@@ -10,7 +10,7 @@ RemainAfterExit=yes
 
 RuntimeDirectory=docs
 Environment="DOCS_PATH=/var/run/docs/docs"
-ExecStartPre=/usr/bin/git clone -c "core.sshCommand=ssh -i /etc/compose/deploy.rsa" git@github.com:cybershoe/f5-techxchange-nginx-one.git /var/run/docs
+ExecStartPre=/usr/bin/git clone https://github.com/f5devcentral/f5-techxchange-nginx-one.git /var/run/docs
 ExecStart=/usr/bin/docker-compose -f /var/run/docs/docker-compose.yml up -d
 
 ExecStop=/usr/bin/docker-compose -f /var/run/docs/docker-compose.yml down
