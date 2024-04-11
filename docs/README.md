@@ -201,8 +201,7 @@ sudo hostname <yourname>-techxchange-nginx-plus
     If this occurs, return to step 1 and create a new Data Plane Key.
 
     ```bash
-curl https://agent.connect.nginx.com/nginx-agent/install \|
-DATA_PLANE_KEY=<data plane key> sh -s -- -y
+curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
     ```
 
     The install script will install any necessary dependencies and install
@@ -478,9 +477,8 @@ sudo hostname <yourname>-techxchange-nginx-oss
     the agent to connect to and the instance will appear as “Offline”.
     If this occurs, return to step 1 and create a new Data Plane Key.
 
-    ```
-curl https://agent.connect.nginx.com/nginx-agent/install \|
-DATA_PLANE_KEY="<data plane key>" sh -s -- -y
+    ```bash
+curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
     ```
     The install script will install any necessary dependencies, and install
     the NGINX Agent with the appropriate settings for your system. You will
