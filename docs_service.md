@@ -9,7 +9,7 @@ sudo apt install docker-compose
 
 ## Installing the service
 
-1. Copy the `docs.service` into `/etc/systemd/system/docs.service`, editing as necessary for your repo.
+1. Copy the `docs.service` unit file into `/etc/systemd/system/docs.service`, editing as necessary for your repo.
    
 2. Enable the service:
    ```bash
