@@ -235,8 +235,11 @@ One.
 
 2.  Using your editor of choice, edit the “/etc/nginx/conf.d/demo.conf”
     file to include a location block at the end of the server block with
-    the “stub_status” directive. You will need to use sudo to edit the
-    file For example:  
+    the “stub_status” directive. 
+    
+    > :point_right: **Note:** You will need to use sudo to edit the file. 
+    
+    For example:  
       
     vi:
     ```bash
