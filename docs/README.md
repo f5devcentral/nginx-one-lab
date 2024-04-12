@@ -4,7 +4,7 @@ This lab will give you an overview of how NGINX One provides visibility
 into a global fleet of NGINX instances, both NGINX Plus and NGINX OSS.
 
 NGINX One is currently in Early Access, and the implemented feature set
-it limited; however, you will still be able to see the onboarding
+is limited; however, you will still be able to see the onboarding
 process, as well as some of the metrics and insights that the platform
 is able to provide. The features and capabilities of the NGINX One
 offering are expected to continue to grow up to and beyond General
@@ -42,7 +42,7 @@ comfortable accessing resources in UDF using SSH.
     ![NGINX One in the XC Console](media/image1.png)
 
 3.  The NGINX One welcome screen will appear. Click “Visit Service” to
-    process to the NGINX One console.
+    proceed to the NGINX One console.
 
     ![The NGINX One Welcome Screen](media/image2.png)
 
@@ -111,17 +111,17 @@ available as well.
     either your RDP Client will open automatically, or it will download
     a .rdp file and you will need to double-click it to connect.
 
-4.  Log into the jumphost with the username “user” and password “user”.
+4.  Log into the jumphost with the username `user` and password `user`.
 
     ![Jumphost login](media/image6.png)
 
 5.  Click the “Terminal Emulator” icon in the dock to open a terminal.
 
-6.  Enter the following command, substituting “\<ip address”\> with the
+6.  Enter the following command, substituting `<ip address>` with the
     address of the system you are connecting to.
 
     ```bash
-ssh ubuntu@<ip address>
+    ssh ubuntu@<ip address>
     ```
 
     ![Jumphost screenshot](media/image7.png)
@@ -160,7 +160,7 @@ ssh ubuntu@<ip address>
     SSH command will be:
 
     ```bash
-ssh ubuntu@10.1.1.4
+    ssh ubuntu@10.1.1.4
     ```
 
 2.  Because the hostname is used as the instance's name in NGINX One,
@@ -174,7 +174,7 @@ ssh ubuntu@10.1.1.4
     This does not affect the lab.
 
     ```bash
-sudo hostname <yourname>-techxchange-nginx-plus
+    sudo hostname <yourname>-techxchange-nginx-plus
     ```
 
     > :point_right: **Note:** If you don't change the hostname, it will
@@ -201,7 +201,7 @@ sudo hostname <yourname>-techxchange-nginx-plus
     If this occurs, return to step 1 and create a new Data Plane Key.
 
     ```bash
-curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
     ```
 
     The install script will install any necessary dependencies and install
@@ -243,12 +243,12 @@ One.
       
     vi:
     ```bash
-sudo vi /etc/nginx/conf.d/demo.conf
+    sudo vi /etc/nginx/conf.d/demo.conf
     ```
 
     nano:
     ```bash
-sudo nano /etc/nginx/conf.d/demo.conf
+    sudo nano /etc/nginx/conf.d/demo.conf
     ```
 
     Add the following location block to the server block:
@@ -260,37 +260,37 @@ sudo nano /etc/nginx/conf.d/demo.conf
 
     The file should like this:
     ```
-server {
-    listen 80 default_server;
-    server_name app_server;
+    server {
+        listen 80 default_server;
+        server_name app_server;
 
-    root /usr/share/nginx/html;
-    error_log /var/log/nginx/app-server-error.log notice;
-    index demo-index.html index.html;
-    expires -1;
+        root /usr/share/nginx/html;
+        error_log /var/log/nginx/app-server-error.log notice;
+        index demo-index.html index.html;
+        expires -1;
 
-    sub_filter_once off;
-    sub_filter 'server_hostname' '\$hostname';
-    sub_filter 'server_address' '\$server_addr:\$server_port';
-    sub_filter 'server_url' '\$request_uri';
-    sub_filter 'remote_addr' '\$remote_addr:\$remote_port';
-    sub_filter 'server_date' '\$time_local';
-    sub_filter 'client_browser' '\$http_user_agent';
-    sub_filter 'request_id' '\$request_id';
-    sub_filter 'nginx_version' '\$nginx_version';
-    sub_filter 'document_root' '\$document_root';
-    sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
+        sub_filter_once off;
+        sub_filter 'server_hostname' '\$hostname';
+        sub_filter 'server_address' '\$server_addr:\$server_port';
+        sub_filter 'server_url' '\$request_uri';
+        sub_filter 'remote_addr' '\$remote_addr:\$remote_port';
+        sub_filter 'server_date' '\$time_local';
+        sub_filter 'client_browser' '\$http_user_agent';
+        sub_filter 'request_id' '\$request_id';
+        sub_filter 'nginx_version' '\$nginx_version';
+        sub_filter 'document_root' '\$document_root';
+        sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
 
-    location = /basic_status {
-        stub_status;
+        location = /basic_status {
+            stub_status;
+        }
     }
-}
     ```
 
 3.  Reload the NGINX Plus configuration with the following command:
 
     ```bash
-sudo nginx -s reload
+    sudo nginx -s reload
     ```
 
 4.  Check that the stub_status module is working.
@@ -316,17 +316,17 @@ this by adding an ACL to the /basic_status location block.
     /basic_status location block to match the following:
 
     ```
-location = /basic_status {  
-    stub_status;  
-    allow 10.0.0.0/8;  
-    deny all;  
-}
+    location = /basic_status {  
+        stub_status;  
+        allow 10.0.0.0/8;  
+        deny all;  
+    }
     ```
 
 7.  Reload the NGINX Plus configuration with the following command:
 
     ```bash
-sudo nginx -s reload
+    sudo nginx -s reload
     ```
 
 8.  Refresh the instance details in the NGINX One console. You should
@@ -341,51 +341,51 @@ sudo nginx -s reload
     the server block:
 
     ```
-listen 443 ssl;  
-ssl_certificate /etc/nginx/ssl/nginx.crt;  
-ssl_certificate_key /etc/nginx/ssl/nginx.key;
+    listen 443 ssl;  
+    ssl_certificate /etc/nginx/ssl/nginx.crt;  
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
     ```
 
     The entire file should now look as follows:
 
     ```
-server {  
-    listen 80 default_server;  
-    server_name app_server;  
-    
-    listen 443 ssl;  
-    ssl_certificate /etc/nginx/ssl/nginx.crt;  
-    ssl_certificate_key /etc/nginx/ssl/nginx.key;  
-    
-    root /usr/share/nginx/html;  
-    error_log /var/log/nginx/app-server-error.log notice;  
-    index demo-index.html index.html;  
-    expires -1;  
-    
-    sub_filter_once off;  
-    sub_filter 'server_hostname' '\$hostname';  
-    sub_filter 'server_address' '\$server_addr:\$server_port';  
-    sub_filter 'server_url' '\$request_uri';  
-    sub_filter 'remote_addr' '\$remote_addr:\$remote_port';  
-    sub_filter 'server_date' '\$time_local';  
-    sub_filter 'client_browser' '\$http_user_agent';  
-    sub_filter 'request_id' '\$request_id';  
-    sub_filter 'nginx_version' '\$nginx_version';  
-    sub_filter 'document_root' '\$document_root';  
-    sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';  
-    
-    location = /basic_status {  
-        stub_status;  
-        allow 10.0.0.0/8;  
-        deny all;  
-    }  
-}
+    server {  
+        listen 80 default_server;  
+        server_name app_server;  
+        
+        listen 443 ssl;  
+        ssl_certificate /etc/nginx/ssl/nginx.crt;  
+        ssl_certificate_key /etc/nginx/ssl/nginx.key;  
+        
+        root /usr/share/nginx/html;  
+        error_log /var/log/nginx/app-server-error.log notice;  
+        index demo-index.html index.html;  
+        expires -1;  
+        
+        sub_filter_once off;  
+        sub_filter 'server_hostname' '\$hostname';  
+        sub_filter 'server_address' '\$server_addr:\$server_port';  
+        sub_filter 'server_url' '\$request_uri';  
+        sub_filter 'remote_addr' '\$remote_addr:\$remote_port';  
+        sub_filter 'server_date' '\$time_local';  
+        sub_filter 'client_browser' '\$http_user_agent';  
+        sub_filter 'request_id' '\$request_id';  
+        sub_filter 'nginx_version' '\$nginx_version';  
+        sub_filter 'document_root' '\$document_root';  
+        sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';  
+        
+        location = /basic_status {  
+            stub_status;  
+            allow 10.0.0.0/8;  
+            deny all;  
+        }  
+    }
     ```
 
 2.  Reload the NGINX Plus configuration with the following command:
 
     ```bash
-sudo nginx -s reload
+    sudo nginx -s reload
     ```
 
 3.  Refresh the instance status in the NGINX One console. You should now
@@ -445,7 +445,7 @@ host with the package maintainer’s version of NGINX installed.
     SSH command will be:
 
     ```bash
-ssh ubuntu@10.1.1.6
+    ssh ubuntu@10.1.1.6
     ```
 
 2.  Because the hostname is used as the name of the instance in NGINX
@@ -459,7 +459,7 @@ ssh ubuntu@10.1.1.6
     affect the lab.
 
     ```bash
-sudo hostname <yourname>-techxchange-nginx-oss
+    sudo hostname <yourname>-techxchange-nginx-oss
     ```
 
 3.  Observe the running NGINX instance on this machine.
@@ -481,7 +481,7 @@ sudo hostname <yourname>-techxchange-nginx-oss
     If this occurs, return to step 1 and create a new Data Plane Key.
 
     ```bash
-curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
     ```
     The install script will install any necessary dependencies, and install
     the NGINX Agent with the appropriate settings for your system. You will
