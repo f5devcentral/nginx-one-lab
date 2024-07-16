@@ -16,9 +16,9 @@ With NGINX One, you will get improved:
 
 ## Introduction
 
-This lab will give you an overview of how NGINX One provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX OSS.
+This lab will give you an overview of how NGINX One provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX Open Source (OSS).
 
-NGINX One is currently in Early Access, and the implemented feature set is limited; however, you will still be able to see the onboarding process, as well as some of the metrics and insights that the platform is able to provide. The features and capabilities of the NGINX One offering are expected to continue to grow up to and beyond General Availability.
+NGINX One is currently in Early Access, and the implemented feature set is growing all the time. The features and capabilities of the NGINX One offering are expected to continue to grow up to and beyond General Availability.
 
 After this lab, you will be able to:
 
@@ -34,7 +34,7 @@ You will use your existing F5 XC Sales tenant to complete this lab. If you do no
 
 ### UDF Blueprint
 
-The “TechXchange 2024 – NGINX One” blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
+The “NGINX One Sales Enablement” blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
 
 ## Lab 1: Accessing the NGINX One Console
 
@@ -106,11 +106,11 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 ### Generating a Data Plane Key
 
-1. From the NGINX One console, in the left hand menu under the “Manage” section, select “Data Pane Keys”.
+1. From the NGINX One console, in the left hand menu under the “Manage” section, select “Data Plane Keys”.
 
 2. Click “Add Data Plane Key”.
 
-3. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is “\<yourname\>-techxchange-nginx-plus-key”.
+3. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is “\<yourname\>-nginx-key”.
 
     > :point_right: **Note:** You are working in a shared tenant; keep track of your resources, and be careful not to accidently modify anyone else's.
 
@@ -118,9 +118,11 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
     ![Generating a Data Plane Key](media/image8.png)
 
+    TODO: Update this image
+
 5. The Data Plane Key will be displayed. Click the “Copy” icon to copy the key to the clipboard.
 
-    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click close.
+    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is no way to retrieve the key after you click close. This key will be used in multiple labs.
 
     ![Data Plane Key](media/image9.png)
 
@@ -135,7 +137,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 2. Because the hostname is used as the instance's name in NGINX One, you should change it to something that that identifies the host belongs to you. Ensure that you are working on the NGINX Plus instance (default hostname ip-10-1-1-4), and run the following command, substituting “\<yourname\>” with a string that identifies you as the user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue showing the previous hostname until you log out and log back in. This does not affect the lab.
 
     ```bash
-    sudo hostname <yourname>-techxchange-nginx-plus
+    sudo hostname <yourname>-nginx-plus
     ```
 
     > :point_right: **Note:** If you don't change the hostname, it will appear as `ip-10-1-1-4` in the console, along with everybody else who didn't change the hostname, and you won't be able to easily identify your instance later.
@@ -161,10 +163,12 @@ The requirements for this lab are minimal. If you prefer working directly from y
 6. You should see your new instance in the list. Click its hostname to view the instance details.
 
     ![NGINX One Instance List](media/image11.png)
+        TODO: Update this image
 
 7. Explore the instance details:
 
     ![NGINX Plus instance details](media/image12.png)
+        TODO: Update this image
 
 ## Lab 3: Configuration Suggestions
 
@@ -248,6 +252,7 @@ In the previous lab, the NGINX Agent installer provided a warning that there was
 5. Refresh the instance details in the NGINX One console.
 
     ![NGINX One Console showing a configuration recommendation.](media/image14.png)
+        TODO: Update this image
 
     Notice that NGINX One has identified a potential configuration issue: the newly-added stub_status page is open to the world. We can remediate this by adding an ACL to the /basic_status location block.
 
@@ -270,14 +275,15 @@ In the previous lab, the NGINX Agent installer provided a warning that there was
 8. Refresh the instance details in the NGINX One console. You should see that the configuration recommendation is no longer shown.
 
     ![Configuration recommendation cleared.](media/image15.png)
+        TODO: Update this image
 
 ### Adding a TLS certificate
 
 1. Back on the NGINX Plus instance, edit the “/etc/nginx/conf.d/demo.conf” file again and add the following to the server block:
 
     ```nginx
-    listen 443 ssl;  
-    ssl_certificate /etc/nginx/ssl/nginx.crt;  
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
     ssl_certificate_key /etc/nginx/ssl/nginx.key;
     ```
 
@@ -325,40 +331,19 @@ In the previous lab, the NGINX Agent installer provided a warning that there was
 
 3. Refresh the instance status in the NGINX One console. You should now see the certificate, and the validity status, as well as a new recommendation.
 
-4. You can view the configuration, and recommendations, by clicking the “View Configuration” link in the “Configuration Recommendations” section. Currently NGINX One can only view configurations.
+4. You can view the configuration, and recommendations, by clicking the “View Configuration” link in the “Configuration Recommendations” section.
 
     ![Certificate status](media/image16.png)
+        TODO: Update this image
 
 5. Select the “demo.conf” file from the file picker. Note the blue dots and the number “1” next to demo.conf; the configuration viewer highlights the location(s) of any recommendations it has for the NGINX configuration.
 
     ![Configuration Viewer](media/image17.png)
+        TODO: Update this image
 
 ## Lab 4: NGINX OSS
 
 NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX Open Source instances. The UDF blueprint contains a second Ubuntu host with the package maintainer’s version of NGINX installed.
-
-### Generating a Data Plane Key
-
-1. From the NGINX One console, in the left hand menu under the “Manage” section, select “Data Pane Keys”.
-
-2. Click “Add Data Plane Key”.
-
-3. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is “\<yourname\>-techxchange-nginx-oss-key”.
-
-4. Click “Generate”
-
-    ![Data Plane Key Generation](media/image18.png)
-
-    > :point_right: **Note:** You are working in a shared tenant; keep
-    > track of your resources, and be careful not to accidently modify
-    > anyone else's.
-
-5. The Data Plane Key will be displayed. Click the “Copy” icon to copy the key to the clipboard.
-
-    > :warning: **Warning:** *SAVE THIS KEY SOMEWHERE SAFE.* There is
-    > no way to retrieve the key after you click close.
-
-    ![Data Plane Key](media/image9.png)
 
 ### Installing NGINX Agent
 
@@ -371,7 +356,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 2. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting “\<yourname\>” with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
 
     ```bash
-    sudo hostname <yourname>-techxchange-nginx-oss
+    sudo hostname <yourname>-nginx-oss
     ```
 
 3. Observe the running NGINX instance on this machine.
@@ -382,7 +367,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
     ![NGINX OSS Demo page](media/image19.png)
 
-4. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute \<data plane key\> with the key you saved in step 5. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as “Offline”. If this occurs, return to step 1 and create a new Data Plane Key.
+4. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute \<data plane key\> with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as “Offline”. If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
 
     ```bash
     curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
@@ -395,6 +380,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 6. Click its hostname to view the instance details.
 
     ![A screenshot of a computer Description automatically generated](media/image20.png)
+        TODO: Update this image
 
 7. Explore the instance details.
 
@@ -406,29 +392,29 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. From the NGINX One console, in the left-hand menu in the “Manage” section, select “Data Plane Keys”
 
-2. Select the context menu for the Data Plane Key for your NGINX OSS instance, and select “Revoke”.
+2. Select the context menu for the Data Plane Key you created in lab 1, and select “Revoke”.
 
     > :warning: **Warning:** Make sure you are revoking your own key and not someone else’s.
 
     ![Revoking a Data Plane Key](media/image22.png)
+        TODO: Update this image
 
 3. Confirm the revocation.
 
     ![Confirming the revocation](media/image23.png)
+        TODO: Update this image
 
-4. Repeat steps 2 and 3 for the NGINX Plus instance.
+4. From the left-hand menu in the “Manage” section, select “Instances”.
 
-5. From the left-hand menu in the “Manage” section, select “Instances”.
-
-6. Select the context menu for the NGINX OSS instance, and select
+5. Select the context menu for the NGINX OSS instance, and select
     “Delete”.
 
     > :warning: **Warning:** Make sure you are deleting your own instance and not someone else’s.
 
     ![Deleting an instance](media/image24.png)
 
-7. Confirm the deletion.
+6. Confirm the deletion.
 
     ![Confirming the deletion](media/image25.png)
 
-8. Repeat steps 6 and 7 for the NGINX Plus instance.
+7. Repeat steps 5 and 6 for the NGINX Plus instance.
