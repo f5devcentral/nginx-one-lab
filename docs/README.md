@@ -35,7 +35,7 @@ You will use your existing F5 XC Sales tenant to complete this lab. If you do no
 
 ### UDF Blueprint
 
-The "NGINX One Sales Enablement" blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
+The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
 
 ## Lab 1: Accessing the NGINX One Console
 
