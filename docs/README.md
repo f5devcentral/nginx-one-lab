@@ -97,10 +97,10 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Click the "Terminal Emulator" icon in the dock to open a terminal.
 
-1. Enter the following command, substituting `<ip address>` with the address of the system you are connecting to.
+1. Enter the following command, substituting `ip-address` with the address of the system you are connecting to.
 
     ```bash
-    ssh ubuntu@<ip address>
+    ssh ubuntu@ip-address
     ```
 
     ![Jumphost screenshot](media/lab2-3.png)
@@ -111,7 +111,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Click "Add Data Plane Key".
 
-1. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is "\<yourname\>-nginx-key".
+1. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is "yourname-nginx-key".
 
     > :point_right: **Note:** You are working in a shared tenant; keep track of your resources, and be careful not to accidently modify anyone else's.
 
@@ -133,26 +133,26 @@ The requirements for this lab are minimal. If you prefer working directly from y
     ssh ubuntu@10.1.1.4
     ```
 
-1. Because the hostname is used as the instance's name in NGINX One, you should change it to something that that identifies the host belongs to you. Ensure that you are working on the NGINX Plus instance (default hostname ip-10-1-1-4), and run the following command, substituting "\<yourname\>" with a string that identifies you as the user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue showing the previous hostname until you log out and log back in. This does not affect the lab.
+1. Because the hostname is used as the instance's name in NGINX One, you should change it to something that that identifies the host belongs to you. Ensure that you are working on the NGINX Plus instance (default hostname ip-10-1-1-4), and run the following command, substituting "yourname" with a string that identifies you as the user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue showing the previous hostname until you log out and log back in. This does not affect the lab.
 
     ```bash
-    sudo hostnamectl set-hostname <yourname>-nginx-plus
+    sudo hostnamectl set-hostname yourname-nginx-plus
     ```
 
     > :point_right: **Note:** If you don't change the hostname, it will appear as `ip-10-1-1-4` in the console, along with everybody else who didn't change the hostname, and you won't be able to easily identify your instance later.
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to <http://10.1.1.4>
+    1. If you are working from the jumphost, open the Chromium browser and navigate to `http://10.1.1.4`
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
     ![NGINX Plus demo page ](media/lab2-6.png)
 
-1. From the NGINX Plus instance, run the following command to install the NGINX Agent. Substitute \<data plane key\> with the key you saved in step 5. Make sure you are working on the NGINX Plus instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to step 1 and create a new Data Plane Key.
+1. From the NGINX Plus instance, run the following command to install the NGINX Agent. Substitute "data-plane-key" with the key you saved in step 5. Make sure you are working on the NGINX Plus instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to step 1 and create a new Data Plane Key.
 
     ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
     ```
 
     The install script will install any necessary dependencies and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning for the moment.
@@ -259,7 +259,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to <http://10.1.1.4/nginx_status>
+    - If you are working through the jumphost, open Chromium and navigate to `http://10.1.1.4/nginx_status`
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -342,24 +342,24 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
     ssh ubuntu@10.1.1.6
     ```
 
-1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting "\<yourname\>" with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
+1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting "yourname" with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
 
     ```bash
-    sudo hostnamectl set-hostname <yourname>-nginx-oss
+    sudo hostnamectl set-hostname yourname-nginx-oss
     ```
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to <http://10.1.1.6/>
+    - If you are working from the jumphost, open the Chromium browser and navigate to `http://10.1.1.6/`
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
     ![NGINX OSS Demo page](media/lab4-1.png)
 
-1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute \<data plane key\> with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
+1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
 
     ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='<data plane key>' sh -s -- -y
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
     ```
 
     The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning.
