@@ -91,13 +91,13 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Click the "RDP" option. Depending on your computer’s configuration, either your RDP Client will open automatically, or it will download an .rdp file and you will need to double-click it to connect.
 
-1. Log into the jumphost with the username `user` and password `user`.
+1. Log into the jumphost with the username **"user"** and password **"user"**.
 
     ![Jumphost login](media/lab2-2.png)
 
 1. Click the "Terminal Emulator" icon in the dock to open a terminal.
 
-1. Enter the following command, substituting `ip-address` with the address of the system you are connecting to.
+1. Enter the following command, substituting **ip-address** with the address of the system you are connecting to.
 
     ```bash
     ssh ubuntu@ip-address
@@ -139,11 +139,11 @@ The requirements for this lab are minimal. If you prefer working directly from y
     sudo hostnamectl set-hostname yourname-nginx-plus
     ```
 
-    > :point_right: **Note:** If you don't change the hostname, it will appear as `ip-10-1-1-4` in the console, along with everybody else who didn't change the hostname, and you won't be able to easily identify your instance later.
+    > :point_right: **Note:** If you don't change the hostname, it will appear as **ip-10-1-1-4** in the console, along with everybody else who didn't change the hostname, and you won't be able to easily identify your instance later.
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to `http://10.1.1.4`
+    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4**
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
@@ -185,7 +185,7 @@ In the previous lab, the NGINX Agent installer provided a warning that there was
 
     ![Edit Configuration link](media/lab3-2.png)
 
-1. Select the `etc/nginx/conf.d/demo.conf` file from the tree view on the left side of the configuration editor.
+1. Select the **etc/nginx/conf.d/demo.conf** file from the tree view on the left side of the configuration editor.
 
     ![Select demo.conf file](media/lab3-3.png)
 
@@ -230,7 +230,7 @@ In the previous lab, the NGINX Agent installer provided a warning that there was
     ```
 
 1. You will see that there is a message below the editor: *"1 recommendation found for /etc/nginx/conf.d/demo.conf
-Security - Error: stub_status should have access control list defined"*. Why? NGINX One includes a configuration advisor and it identified that exposing the `stub_status` endpoint open to all users is considered a security risk. We can remediate this by adding an ACL to the `/nginx_status` location block to only allow the UDF blueprint network and NGINX Agent (running locally on the instance) to access the stub status endpoint.
+Security - Error: stub_status should have access control list defined"*. Why? NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to all users is considered a security risk. We can remediate this by adding an ACL to the **/nginx_status** location block to only allow the UDF blueprint network and NGINX Agent (running locally on the instance) to access the stub status endpoint.
 
     ![config warning](media/lab3-4.png)
 
@@ -259,7 +259,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to `http://10.1.1.4/nginx_status`
+    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status**
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -350,7 +350,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to `http://10.1.1.6/`
+    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
