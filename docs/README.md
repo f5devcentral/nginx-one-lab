@@ -149,7 +149,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4**
+    1. If you are working from the jumphost, open the Chromium browser and navigate to **<http://10.1.1.4>**
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
@@ -265,7 +265,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status**
+    - If you are working through the jumphost, open Chromium and navigate to **<http://10.1.1.4/nginx_status>**
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -287,16 +287,16 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
     server {
         listen 80 default_server;
         server_name app_server;
-        
+
         listen 443 ssl;
         ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
         ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
-        
+
         root /usr/share/nginx/html;
         error_log /var/log/nginx/app-server-error.log notice;
         index demo-index.html index.html;
         expires -1;
-        
+
         sub_filter_once off;
         sub_filter 'server_hostname' '\$hostname';
         sub_filter 'server_address' '\$server_addr:\$server_port';
@@ -308,13 +308,13 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
         sub_filter 'nginx_version' '\$nginx_version';
         sub_filter 'document_root' '\$document_root';
         sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
-        
+
         location = /nginx_status {
             stub_status;
             allow 10.0.0.0/8;
             allow 127.0.0.1;
             deny all;
-        }  
+        }
     }
     ```
 
@@ -356,7 +356,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
+    - If you are working from the jumphost, open the Chromium browser and navigate to **<http://10.1.1.6/>**
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
@@ -381,6 +381,70 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
     ![Instance Details](media/lab4-3.png)
 
     Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
+
+## Lab 4: Config Sync Group
+
+We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through this feature.
+
+### Creating Config Sync Group
+
+1. Go to the NGINX One console.
+
+1. From the left menu in the "Manage" section, click on "Config Sync Groups".
+
+1. Click on "Add Config Sync Group".
+    ![Add Config Sync Group](media/lab5-1.png)
+
+1. On the right, provide a name then select "Create" on the bottom. Your new item is now created.
+    ![New Config Sync Group](media/lab5-2.png)
+
+You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the main NGINX config to use for all NGINX instances added to this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
+
+1. When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
+1. You can manually define it before you add any NGINX instances.
+
+    1. Click the "Configuration" tab then click on "Edit Configuration"
+    ![Manually Create Initial Configuration](media/lab5-3.png)
+
+    1. A editor window appears that allows you to define the configuration for the NGINX instance.
+    ![Manual Configuration](media/lab5-4.png)
+
+    1. You can also add files by clicking on "Add File" but this limited to `/etc/nginx/`.
+
+    1. Select "Next" then "Save and Publish"
+
+This lab will proceed with option 1 where the configuration will be auto generated using the first NGINX instance added to this group.
+
+### Adding NGINX to config sync group
+
+You will be able to mix NGINX Plus and NGINX Open Source instances but the only exception is any configuration unique to NGINX Plus won't be sync'd to the NGINX Open Source instance.
+When you view details from NGINX Open Source, there will be an error message that show this. The status of the NGINX Open Source instance will be Out of Sync
+
+#### Adding existing instance
+
+1. Open up your config sync group
+1. Click on "Add Instance to Config Sync Group"
+1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click on "Next"
+1. The next screen might be missing addtional options for thus. Run the following command
+
+    ```bash
+    curl https://agent.connect.nginxlab.net/nginx-agent/install |  DATA_PLANE_KEY="<yourDataPlaneKey>" sh -s -- -y -c <yourConfigSyncGroupName>
+    sudo systemctl restart nginx-agent
+    ```
+
+1. When you select the "Configuration" tab, you should notice the this config is the same as this first NGINX instance
+
+#### Adding a new instance using NGINX Plus container
+
+1. Now we can add another one. Run the following your
+
+ to add
+
+### Updating and publishing configuration
+
+We will now make an update to the configuration defined in the config sync group then publish the change
+
+### Adding NGINX instance to Config Sync Group
 
 ## Lab Cleanup
 
