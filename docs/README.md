@@ -149,7 +149,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to **<http://10.1.1.4>**
+    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4** <!-- markdownlint-disable-line -->
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
@@ -265,7 +265,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to **<http://10.1.1.4/nginx_status>**
+    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status** <!-- markdownlint-disable-line -->
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -356,7 +356,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to **<http://10.1.1.6/>**
+    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/** <!-- markdownlint-disable-line -->
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
@@ -384,7 +384,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 ## Lab 5: Config Sync Group
 
-We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through this feature.
+We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through using this feature.
 
 ### Creating Config Sync Group
 
@@ -398,7 +398,7 @@ We can group multiple NGINX instances into a Config Sync Group where all instanc
 1. On the right, provide a name then select "Create" on the bottom. Your new item is now created.
     ![New Config Sync Group](media/lab5-2.png)
 
-You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the main NGINX config to use for all NGINX instances added to this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
+You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the one NGINX config to use for all NGINX instances in this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
 
 1. When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
 1. You can manually define it before you add any NGINX instances.
@@ -431,7 +431,7 @@ Lets start by adding an existing NGINX Plus instance.
 1. The next screen might be missing additional options. Run the following commands on your NGINX Plus instance named, `yourname-nginx-plus`.
 
     ```bash
-    curl https://agent.connect.nginxlab.net/nginx-agent/install |  DATA_PLANE_KEY="<yourDataPlaneKey>" sh -s -- -y -c <yourConfigSyncGroupName>
+    curl https://agent.connect.nginxlab.net/nginx-agent/install |  DATA_PLANE_KEY="YOUR_DATA_PLANE_KEY" sh -s -- -y -c YOUR_CONFIG_SYNC_GROUP_NAME
     sudo systemctl restart nginx-agent
     ```
 
@@ -446,7 +446,7 @@ Now that we added an NGINX instance, lets try to add another one. But this time,
 The **Linux Jumphost** from the UDF environment has `docker` installed and is setup so it can run an NGINX Plus with Agent container image. The container image we will use here is `private-registry.nginx.com/nginx-plus/agent:debian`. If you want to see a list of all NGINX Plus with Agent tags, run the command below
 
 ```bash
-curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key <yourNginxPlusKey> --cert <yourNginxPlusCert>
+curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
 ```
 
 1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
@@ -496,7 +496,7 @@ We can now confirm the configuration changes on the NGINX instance
 1. On the NGINX Plus container, you can view the `demo.conf` file by running the following
 
     ```bash
-    docker exec <NginxPlusContainerName> cat /etc/nginx/conf.d/demo.conf
+    docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
     ```
 
 Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/redirect/google` at the end of the browser.
