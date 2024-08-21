@@ -417,8 +417,7 @@ This lab will proceed with option 1 where the configuration will be auto generat
 
 ### Adding NGINX to config sync group
 
-You will be able to mix NGINX Plus and NGINX Open Source instances but the only exception is any configuration unique to NGINX Plus won't be sync'd to the NGINX Open Source instance.
-When you view details from NGINX Open Source, there will be an error message that show this. The status of the NGINX Open Source instance will be Out of Sync
+We will now proceed with creating a Config Sync Group.
 
 #### Adding existing instance
 
@@ -441,9 +440,9 @@ Lets start by adding an existing NGINX Plus instance.
 
 #### Adding new instance using NGINX Plus container
 
-Now that we added an NGINX instance, lets try to add another one. But this time, lets try to add an NGINX Plus container instance.
+Now that we added an NGINX instance, lets add another one. But this time, we will add an NGINX Plus container.
 
-The **Linux Jumphost** from the UDF environment has `docker` installed and is setup so it can run an NGINX Plus with Agent container image. The container image we will use here is `private-registry.nginx.com/nginx-plus/agent:debian`. If you want to see a list of all NGINX Plus with Agent tags, run the command below
+The **Linux Jumphost** from the UDF environment has `docker` installed and is setup so it can run an NGINX Plus container image. The container image we will use here is `private-registry.nginx.com/nginx-plus/agent:debian` which has NGINX Plus with the Agent for NGINX One. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
 
 ```bash
 curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
@@ -508,6 +507,24 @@ Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are tryi
 If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/redirect/google`.
 
 ![NGINX HTTP Redirect Jumphost](media/lab5-13.png)
+
+### Mixing NGINX Plus and NGINX Open Source Instances
+
+You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible with for both instances. For example, you will not be able to publish NGINX Plus unique config to NGINX Open Source.
+
+When you view details from NGINX Open Source, there will be an error message that show this. The status of the NGINX Open Source instance will be "Out of Sync".
+
+We will now show how this works in this section of the lab.
+
+1. Add your NGINX Open Source instance to your config sync group
+
+1. When you add the Open Source instance, the status shows "Out of Sync"
+    ![Out of Sync Instance](media/lab5-14.png)
+
+1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
+    ![Out of Sync Instance Details](media/lab5-15.png)
+
+We will not go through the exercise resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
 
 ## Lab Cleanup
 
