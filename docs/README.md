@@ -501,13 +501,13 @@ We can now confirm the configuration changes on the NGINX instance
 
 Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/redirect/google` at the end of the browser.
 
-![NGINX HTTP UDF Access](media/lab5-10.png)
+![NGINX HTTP UDF Access](media/lab5-11.png)
 
-![URL Append](media/lab5-11.png)
+![URL Append](media/lab5-12.png)
 
 If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/redirect/google`.
 
-![NGINX HTTP Redirect Jumphost](media/lab5-10.png)
+![NGINX HTTP Redirect Jumphost](media/lab5-13.png)
 
 ## Lab Cleanup
 
