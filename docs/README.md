@@ -382,7 +382,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
     Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
 
-## Lab 4: Config Sync Group
+## Lab 5: Config Sync Group
 
 We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through this feature.
 
@@ -422,29 +422,92 @@ When you view details from NGINX Open Source, there will be an error message tha
 
 #### Adding existing instance
 
-1. Open up your config sync group
-1. Click on "Add Instance to Config Sync Group"
-1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click on "Next"
-1. The next screen might be missing addtional options for thus. Run the following command
+Lets start by adding an existing NGINX Plus instance.
+
+1. Open up your config sync group.
+1. Click on "Add Instance to Config Sync Group".
+    ![Add Existing Instance](media/lab5-5.png)
+1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
+1. The next screen might be missing additional options. Run the following commands on your NGINX Plus instance named, `yourname-nginx-plus`.
 
     ```bash
     curl https://agent.connect.nginxlab.net/nginx-agent/install |  DATA_PLANE_KEY="<yourDataPlaneKey>" sh -s -- -y -c <yourConfigSyncGroupName>
     sudo systemctl restart nginx-agent
     ```
 
-1. When you select the "Configuration" tab, you should notice the this config is the same as this first NGINX instance
+1. After `nginx-agent` is restarted, you now see your first NGINX instance added to this Config Sync Group.
+    ![First NGINX Instance](media/lab5-6.png)
+1. When you select the "Configuration" tab, notice the config here is the same as the config on the NGINX instance we just added.
 
-#### Adding a new instance using NGINX Plus container
+#### Adding new instance using NGINX Plus container
 
-1. Now we can add another one. Run the following your
+Now that we added an NGINX instance, lets try to add another one. But this time, lets try to add an NGINX Plus container instance.
 
- to add
+The **Linux Jumphost** from the UDF environment has `docker` installed and is setup so it can run an NGINX Plus with Agent container image. The container image we will use here is `private-registry.nginx.com/nginx-plus/agent:debian`. If you want to see a list of all NGINX Plus with Agent tags, run the command below
+
+```bash
+curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key <yourNginxPlusKey> --cert <yourNginxPlusCert>
+```
+
+1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
+1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
+1. If you saved your Data Plane Key from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+1. Provide your Data Plane Key if you selected "Use existing Key"
+1. Select the "Docker Container" tab.
+    ![Add New NGINX Plus Container](media/lab5-7.png)
+1. Log in to the **Linux Jumphost**. This system already logged in to the NGINX Private Registry so Step 1 can be skipped.
+1. Proceed to Step 2 to pull the container image
+1. Then run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+1. Click "Done" to close out the window.
+
+You will now see the second NGINX Plus instance added.
+![Added Second NGINX Plus Instance](media/lab5-8.png)
 
 ### Updating and publishing configuration
 
+Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a redirect
 We will now make an update to the configuration defined in the config sync group then publish the change
 
-### Adding NGINX instance to Config Sync Group
+1. On your COnfig Sync Group, go to the "Configuration" tab.
+1. Click "Edit Configuration"
+    ![Edit Configuration](media/lab5-9.png)
+1. An editor should now appear. We will want to update `demo.conf` so be sure to click on that file.
+    ![Edit File](media/lab5-10.png)
+1. Add the following section to the **server** block then click "Next"
+
+    ```bash
+    location /redirect/google {
+        return 301 https://www.google.com;
+    }
+    ```
+
+1. The following screen will show a diff between existing and new config.
+    ![Confirm Edits](media/lab5-11)
+1. Confirm your changes and click "Save and Publish"
+
+We can now confirm the configuration changes on the NGINX instance
+
+1. On the NGINX Plus component in UDF, you can view the `demo.conf` file by running the following from the console.
+
+    ```bash
+    cat /etc/nginx/conf.d/demo.conf
+    ```
+
+1. On the NGINX Plus container, you can view the `demo.conf` file by running the following
+
+    ```bash
+    docker exec <NginxPlusContainerName> cat /etc/nginx/conf.d/demo.conf
+    ```
+
+Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/redirect/google` at the end of the browser.
+
+![NGINX HTTP UDF Access](media/lab5-10.png)
+
+![URL Append](media/lab5-11.png)
+
+If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/redirect/google`.
+
+![NGINX HTTP Redirect Jumphost](media/lab5-10.png)
 
 ## Lab Cleanup
 
