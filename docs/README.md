@@ -393,40 +393,49 @@ We can group multiple NGINX instances into a Config Sync Group where all instanc
 1. From the left menu in the "Manage" section, click on "Config Sync Groups".
 
 1. Click on "Add Config Sync Group".
+
     ![Add Config Sync Group](media/lab5-1.png)
 
 1. On the right, provide a name then select "Create" on the bottom. Your new item is now created.
+
     ![New Config Sync Group](media/lab5-2.png)
 
 You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the one NGINX config to use for all NGINX instances in this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
 
-1. When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
-1. You can manually define it before you add any NGINX instances.
+**Option 1:** When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
 
-    1. Click the "Configuration" tab then click on "Edit Configuration"
+**Option 2.** You can manually define it before you add any NGINX instances.
+
+1. Click the "Configuration" tab then click on "Edit Configuration"
+
     ![Manually Create Initial Configuration](media/lab5-3.png)
 
-    1. A editor window appears that allows you to define the configuration for the NGINX instance.
+1. A editor window appears that allows you to define the configuration for the NGINX instance.
+
     ![Manual Configuration](media/lab5-4.png)
 
-    1. You can also add files by clicking on "Add File" but this limited to `/etc/nginx/`.
+1. You can also add files by clicking on "Add File" but this limited to `/etc/nginx/`.
 
-    1. Select "Next" then "Save and Publish"
+1. Select "Next" then "Save and Publish"
 
 This lab will proceed with option 1 where the configuration will be auto generated using the first NGINX instance added to this group.
 
 ### Adding NGINX to config sync group
 
-We will now proceed with creating a Config Sync Group.
+We will now proceed with adding an NGINX instance to the Config Sync Group.
 
 #### Adding existing instance
 
 Lets start by adding an existing NGINX Plus instance.
 
 1. Open up your config sync group.
+
 1. Click on "Add Instance to Config Sync Group".
+
     ![Add Existing Instance](media/lab5-5.png)
+
 1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
+
 1. The next screen might be missing additional options. Run the following commands on your NGINX Plus instance named, `yourname-nginx-plus`.
 
     ```bash
@@ -435,7 +444,9 @@ Lets start by adding an existing NGINX Plus instance.
     ```
 
 1. After `nginx-agent` is restarted, you now see your first NGINX instance added to this Config Sync Group.
+
     ![First NGINX Instance](media/lab5-6.png)
+
 1. When you select the "Configuration" tab, notice the config here is the same as the config on the NGINX instance we just added.
 
 #### Adding new instance using NGINX Plus container
@@ -449,17 +460,27 @@ curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR
 ```
 
 1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
+
 1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
+
 1. If you saved your Data Plane Key from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+
 1. Provide your Data Plane Key if you selected "Use existing Key"
+
 1. Select the "Docker Container" tab.
+
     ![Add New NGINX Plus Container](media/lab5-7.png)
+
 1. Log in to the **Linux Jumphost**. This system already logged in to the NGINX Private Registry so Step 1 can be skipped.
+
 1. Proceed to Step 2 to pull the container image
+
 1. Then run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+
 1. Click "Done" to close out the window.
 
 You will now see the second NGINX Plus instance added.
+
 ![Added Second NGINX Plus Instance](media/lab5-8.png)
 
 ### Updating and publishing configuration
@@ -468,10 +489,15 @@ Now that we have two instances in a Config Sync Group. Lets now try to publish a
 We will now make an update to the configuration defined in the config sync group then publish the change
 
 1. On your COnfig Sync Group, go to the "Configuration" tab.
+
 1. Click "Edit Configuration"
+
     ![Edit Configuration](media/lab5-9.png)
+
 1. An editor should now appear. We will want to update `demo.conf` so be sure to click on that file.
+
     ![Edit File](media/lab5-10.png)
+
 1. Add the following section to the **server** block then click "Next"
 
     ```bash
@@ -481,7 +507,9 @@ We will now make an update to the configuration defined in the config sync group
     ```
 
 1. The following screen will show a diff between existing and new config.
-    ![Confirm Edits](media/lab5-11)
+
+    ![Confirm Edits](media/lab5-11.png)
+
 1. Confirm your changes and click "Save and Publish"
 
 We can now confirm the configuration changes on the NGINX instance
@@ -519,9 +547,11 @@ We will now show how this works in this section of the lab.
 1. Add your NGINX Open Source instance to your config sync group
 
 1. When you add the Open Source instance, the status shows "Out of Sync"
+
     ![Out of Sync Instance](media/lab5-14.png)
 
 1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
+
     ![Out of Sync Instance Details](media/lab5-15.png)
 
 We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
