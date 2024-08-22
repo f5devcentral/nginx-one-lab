@@ -524,7 +524,7 @@ We will now show how this works in this section of the lab.
 1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
     ![Out of Sync Instance Details](media/lab5-15.png)
 
-We will not go through the exercise resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
+We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
 
 ## Lab Cleanup
 
