@@ -410,7 +410,7 @@ You can now explore your Config Sync Group by selecting your item. After you sel
 
     ![Manually Create Initial Configuration](media/lab5-3.png)
 
-1. A editor window appears that allows you to define the configuration for the NGINX instance.
+1. An editor window appears that allows you to define the configuration to use for the NGINX instances.
 
     ![Manual Configuration](media/lab5-4.png)
 
@@ -418,7 +418,7 @@ You can now explore your Config Sync Group by selecting your item. After you sel
 
 1. Select "Next" then "Save and Publish"
 
-This lab will proceed with option 1 where the configuration will be auto generated using the first NGINX instance added to this group.
+This lab will proceed with option 1 where the configuration will be auto-generated using the first NGINX instance added to this group.
 
 ### Adding NGINX to config sync group
 
@@ -501,8 +501,9 @@ We will now make an update to the configuration defined in the config sync group
 1. Add the following section to the **server** block then click "Next"
 
     ```bash
-    location /redirect/google {
-        return 301 https://www.google.com;
+    location /configsync/ {
+        default_type text/html;
+        return 200 '<h1>Published change made from NGINX One Config Sync Group</h1>';
     }
     ```
 
@@ -512,7 +513,7 @@ We will now make an update to the configuration defined in the config sync group
 
 1. Confirm your changes and click "Save and Publish"
 
-We can now confirm the configuration changes on the NGINX instance
+We can now confirm the configuration changes on the NGINX instance.
 
 1. On the NGINX Plus component in UDF, you can view the `demo.conf` file by running the following from the console.
 
@@ -520,21 +521,21 @@ We can now confirm the configuration changes on the NGINX instance
     cat /etc/nginx/conf.d/demo.conf
     ```
 
-1. On the NGINX Plus container, you can view the `demo.conf` file by running the following
+1. On the "Lab Framework" component in UDF, you can view the `demo.conf` file from the NGINX Plus container by running the following.
 
     ```bash
-    docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
+    sudo docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
     ```
 
-Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/redirect/google` at the end of the browser.
+Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/configsync/` at the end of the browser.
 
-![NGINX HTTP UDF Access](media/lab5-11.png)
+![NGINX HTTP UDF Access](media/lab5-12.png)
 
-![URL Append](media/lab5-12.png)
+![URL Append](media/lab5-13.png)
 
-If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/redirect/google`.
+If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/configsync/`.
 
-![NGINX HTTP Redirect Jumphost](media/lab5-13.png)
+![NGINX HTTP Redirect Jumphost](media/lab5-14.png)
 
 ### Mixing NGINX Plus and NGINX Open Source Instances
 
@@ -548,11 +549,11 @@ We will now show how this works in this section of the lab.
 
 1. When you add the Open Source instance, the status shows "Out of Sync"
 
-    ![Out of Sync Instance](media/lab5-14.png)
+    ![Out of Sync Instance](media/lab5-15.png)
 
 1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
 
-    ![Out of Sync Instance Details](media/lab5-15.png)
+    ![Out of Sync Instance Details](media/lab5-16.png)
 
 We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
 
@@ -582,11 +583,11 @@ There is not an interface on the UI that will allow you to either remove or chan
 
 The screenshot below show the "Details" screen from the config sync group. It appears I can remove the instance from this instance group but keep the instance managed in NGINX One.
 
-![Remove Instance](media/lab5-16.png)
+![Remove Instance](media/lab5-17.png)
 
 But if you delete it on that screen, you will also notice the NGINX instance is no longer managed by NGINX One.
 
-![Deleted Instance](media/lab5-17.png)
+![Deleted Instance](media/lab5-18.png)
 
 ## Lab Cleanup
 
