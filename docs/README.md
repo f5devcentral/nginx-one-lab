@@ -149,7 +149,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4** <!-- markdownlint-disable-line -->
+    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4**
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
@@ -265,7 +265,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status** <!-- markdownlint-disable-line -->
+    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status**
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -356,7 +356,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/** <!-- markdownlint-disable-line -->
+    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
