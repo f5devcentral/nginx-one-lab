@@ -149,7 +149,7 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 1. Observe the running NGINX instance on this machine.
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4**
+    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4** <!-- markdownlint-disable-line -->
 
     2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
 
@@ -265,7 +265,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status**
+    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status** <!-- markdownlint-disable-line -->
 
     - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
 
@@ -287,16 +287,16 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
     server {
         listen 80 default_server;
         server_name app_server;
-        
+
         listen 443 ssl;
         ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
         ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
-        
+
         root /usr/share/nginx/html;
         error_log /var/log/nginx/app-server-error.log notice;
         index demo-index.html index.html;
         expires -1;
-        
+
         sub_filter_once off;
         sub_filter 'server_hostname' '\$hostname';
         sub_filter 'server_address' '\$server_addr:\$server_port';
@@ -308,13 +308,13 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
         sub_filter 'nginx_version' '\$nginx_version';
         sub_filter 'document_root' '\$document_root';
         sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
-        
+
         location = /nginx_status {
             stub_status;
             allow 10.0.0.0/8;
             allow 127.0.0.1;
             deny all;
-        }  
+        }
     }
     ```
 
@@ -356,7 +356,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
 1. Observe the running NGINX instance on this machine.
 
-    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
+    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/** <!-- markdownlint-disable-line -->
 
     - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
 
@@ -381,6 +381,207 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
     ![Instance Details](media/lab4-3.png)
 
     Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
+
+## Lab 5: Config Sync Group
+
+We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through using this feature.
+
+### Creating Config Sync Group
+
+1. Go to the NGINX One console.
+
+1. From the left menu in the "Manage" section, click on "Config Sync Groups".
+
+1. Click on "Add Config Sync Group".
+
+    ![Add Config Sync Group](media/lab5-1.png)
+
+1. On the right, provide a name then select "Create" on the bottom. Your new item is now created.
+
+    ![New Config Sync Group](media/lab5-2.png)
+
+You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the one NGINX config to use for all NGINX instances in this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
+
+**Option 1:** When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
+
+**Option 2.** You can manually define it before you add any NGINX instances.
+
+1. Click the "Configuration" tab then click on "Edit Configuration"
+
+    ![Manually Create Initial Configuration](media/lab5-3.png)
+
+1. An editor window appears that allows you to define the configuration to use for the NGINX instances.
+
+    ![Manual Configuration](media/lab5-4.png)
+
+1. You can also add files by clicking on "Add File" but this limited to **/etc/nginx/**.
+
+1. Select "Next" then "Save and Publish"
+
+This lab will proceed with option 1 where the configuration will be auto-generated using the first NGINX instance added to this group.
+
+### Adding NGINX to config sync group
+
+We will now proceed with adding an NGINX instance to the Config Sync Group.
+
+#### Adding existing instance
+
+Lets start by adding an existing NGINX Plus instance.
+
+1. Open up your config sync group.
+
+1. Click on "Add Instance to Config Sync Group".
+
+    ![Add Existing Instance](media/lab5-5.png)
+
+1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
+
+1. Follow the instructions on the console of your NGINX Plus instance named, **yourname-nginx-plus**.
+
+1. After the **nginx-agent** is restarted, you now see your first NGINX instance added to this Config Sync Group.
+
+    ![First NGINX Instance](media/lab5-6.png)
+
+1. When you select the "Configuration" tab, notice the config here is the same as the config on the NGINX instance we just added.
+
+#### Adding new instance using NGINX Plus container
+
+Now that we added an NGINX instance, lets add another one. But this time, we will add an NGINX Plus container.
+
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
+
+```bash
+curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
+```
+
+1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
+
+1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
+
+1. If you saved your "Data Plane Key" from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+
+1. Provide your Data Plane Key if you selected "Use existing Key"
+
+1. Select the "Docker Container" tab.
+
+    ![Add New NGINX Plus Container](media/lab5-7.png)
+
+1. Log in to the console of **Lab Framework** from UDF. This system already pulled the container image "Step 1" and "Step 2" can be skipped.
+
+1. Run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+
+1. Click "Done" to close out the window.
+
+You will now see the second NGINX Plus instance added.
+
+![Added Second NGINX Plus Instance](media/lab5-8.png)
+
+### Updating and publishing configuration
+
+Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a new URL that returns a plain text.
+
+We will be making an update to the configuration defined in the config sync group then publish the change
+
+1. On your Config Sync Group, go to the "Configuration" tab.
+
+1. Click "Edit Configuration"
+
+    ![Edit Configuration](media/lab5-9.png)
+
+1. An editor should now appear. We will want to update **demo.conf** so be sure to click on that file.
+
+    ![Edit File](media/lab5-10.png)
+
+1. Add the following section to the **server** block then click "Next"
+
+    ```bash
+    location /configsync/ {
+        default_type text/html;
+        return 200 '<h1>Published change made from NGINX One Config Sync Group</h1>';
+    }
+    ```
+
+1. The following screen will show a diff between existing and new config.
+
+    ![Confirm Edits](media/lab5-11.png)
+
+1. Confirm your changes and click "Save and Publish"
+
+We can now confirm the configuration changes on the NGINX instance.
+
+1. On the NGINX Plus component in UDF, you can view the **demo.conf** file by running the following on the console.
+
+    ```bash
+    cat /etc/nginx/conf.d/demo.conf
+    ```
+
+1. On the "Lab Framework" component in UDF, you can view the **demo.conf** file from the NGINX Plus container by running the following on the console.
+
+    ```bash
+    sudo docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
+    ```
+
+Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append **/configsync/** at the end of the browser.
+
+![NGINX HTTP UDF Access](media/lab5-12.png)
+
+![URL Append](media/lab5-13.png)
+
+If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to **<https://10.1.1.4/configsync/>**.
+
+![NGINX HTTP Redirect Jumphost](media/lab5-14.png)
+
+### Mixing NGINX Plus and NGINX Open Source Instances
+
+You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible with for both instances. For example, you will not be able to publish NGINX Plus unique config to NGINX Open Source.
+
+When you view details from NGINX Open Source, there will be an error message that show this. The status of the NGINX Open Source instance will be "Out of Sync".
+
+We will now show how this works in this section of the lab.
+
+1. Add your NGINX Open Source instance to your config sync group by repeating instructions from [Adding existing instance](#adding-existing-instance) that you did for NGINX Plus.
+
+1. When you add the Open Source instance, the status shows "Out of Sync".
+
+    ![Out of Sync Instance](media/lab5-15.png)
+
+1. Click on your Open Source instance to view additional details about this. Notice the error message showing the reason why the configuration cannot be applied.
+
+    ![Out of Sync Instance Details](media/lab5-16.png)
+
+We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your responsibility to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
+
+### Removing OR Changing NGINX Instances from Config Sync Group
+
+We will now go though the steps for removing an instance from config sync groups. In the example here, the main configuration from our config sync group is not compatible with NGINX Open Source and we are going to remove it.
+
+To remove NGINX Open Source from this instance group:
+
+1. Open console access to your NGINX Open Source instance.
+
+1. Open **/var/lib/nginx-agent/agent-dynamic.conf** in a text editor and remove or comment out the following line.
+
+    ```bash
+    instance_group: labuser
+    ```
+
+    > :point_right: **Note:** You can also move an instance to another config sync group by changing the **instance_group** name.
+
+1. Restart NGINX Agent.
+
+    ```bash
+    sudo systemctl restart nginx-agent
+    ```
+
+There is not an interface on the UI that will allow you to either remove or change NGINX instance from the config sync group. If you do use the UI to remove an instance from the config sync group it will also remove the instance from being managed in NGINX One.
+
+The screenshot below show the "Details" screen from the config sync group. It appears I can remove the instance from this instance group but keep the instance managed in NGINX One.
+
+![Remove Instance](media/lab5-17.png)
+
+But if you delete it on that screen, you will also notice the NGINX instance is no longer managed by NGINX One.
+
+![Deleted Instance](media/lab5-18.png)
 
 ## Lab Cleanup
 
@@ -411,9 +612,9 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the deletion](media/cleanup-5.png)
 
-1. Repeat steps 1-6 for the NGINX Plus instance.
+1. Repeat steps 1-6 for the NGINX Plus instance and the NGINX Plus container instance.
 
-1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Data Plane Keys"
+1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Data Plane Keys".
 
 1. Select the context menu for the Data Plane Key you created in lab 1, and select "Revoke".
 
@@ -424,5 +625,13 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 1. Confirm the revocation.
 
     ![Confirming the revocation](media/cleanup-7.png)
+
+1. From the NGINX One console, in the left-hand menu in the Manage section, select "Config Sync Groups".
+
+1. Select the context menu for the Config Sync Group you created in lab 5, and select "Delete".
+
+    ![Delete Config Sync Group](media/cleanup-8.png)
+
+1. Click "Delete" to confirm.
 
 END OF LAB
