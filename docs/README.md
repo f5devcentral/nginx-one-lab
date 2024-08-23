@@ -439,7 +439,7 @@ Lets start by adding an existing NGINX Plus instance.
 1. The next screen might be missing additional options. Run the following commands on your NGINX Plus instance named, `yourname-nginx-plus`.
 
     ```bash
-    curl https://agent.connect.nginxlab.net/nginx-agent/install |  DATA_PLANE_KEY="YOUR_DATA_PLANE_KEY" sh -s -- -y -c YOUR_CONFIG_SYNC_GROUP_NAME
+    curl https://agent.connect.nginx.com/nginx-agent/install |  DATA_PLANE_KEY="YOUR_DATA_PLANE_KEY" sh -s -- -y -c YOUR_CONFIG_SYNC_GROUP_NAME
     sudo systemctl restart nginx-agent
     ```
 
@@ -555,6 +555,38 @@ We will now show how this works in this section of the lab.
     ![Out of Sync Instance Details](media/lab5-15.png)
 
 We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
+
+### Removing OR Changing NGINX Instances from Config Sync Group
+
+We will now go though the steps for removing instances from config sync groups. In the example here, the main configuration from our config sync group is not compatiable with NGINX Open Source and we decided to remove it.
+
+To remove NGINX Open Source from this instance group:
+
+1. Open console access to your NGINX Open Source instance.
+
+1. Open `/var/lib/nginx-agent/agent-dynamic.conf` in a text editor and remove or comment out the following line.
+
+    ```bash
+    instance_group: labuser
+    ```
+
+    > :point_right: **Note:** You can also move an instance to another config sync group by changing the `instance_group` name.
+
+1. Restart NGINX Agent.
+
+    ```bash
+    sudo systemctl restart nginx-agent
+    ```
+
+There is not an interface on the UI that will allow you to either remove or change NGINX instance from the config sync group. If you do use the UI to remove an instance from the config sync group it will also remove the instance from being managed in NGINX One.
+
+The screenshot below show the "Details" screen from the config sync group. It appears I can remove the instance from this instance group but keep the instance managed in NGINX One.
+
+![Remove Instance](media/lab5-16.png)
+
+But if you delete it on that screen, you will also notice the NGINX instance is no longer managed by NGINX One.
+
+![Deleted Instance](media/lab5-17.png)
 
 ## Lab Cleanup
 
