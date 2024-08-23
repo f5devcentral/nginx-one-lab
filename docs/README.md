@@ -478,8 +478,9 @@ You will now see the second NGINX Plus instance added.
 
 ### Updating and publishing configuration
 
-Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a redirect
-We will now make an update to the configuration defined in the config sync group then publish the change
+Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a new URL that returns a plain text.
+
+We will be making an update to the configuration defined in the config sync group then publish the change
 
 1. On your Config Sync Group, go to the "Configuration" tab.
 
@@ -538,9 +539,9 @@ When you view details from NGINX Open Source, there will be an error message tha
 
 We will now show how this works in this section of the lab.
 
-1. Add your NGINX Open Source instance to your config sync group
+1. Add your NGINX Open Source instance to your config sync group by repeating instructions from [Adding existing instance](#adding-existing-instance) that you did for NGINX Plus.
 
-1. When you add the Open Source instance, the status shows "Out of Sync"
+1. When you add the Open Source instance, the status shows "Out of Sync".
 
     ![Out of Sync Instance](media/lab5-15.png)
 
@@ -548,11 +549,11 @@ We will now show how this works in this section of the lab.
 
     ![Out of Sync Instance Details](media/lab5-16.png)
 
-We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your reasonability to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
+We will not go through the exercise of resolving the configuration such that it will be valid for both instance types. The point here is to show it is possible to mix instances and it is your responsibility to insure the configuration is valid for both NGINX Plus and NGINX Open Source.
 
 ### Removing OR Changing NGINX Instances from Config Sync Group
 
-We will now go though the steps for removing instances from config sync groups. In the example here, the main configuration from our config sync group is not compatiable with NGINX Open Source and we decided to remove it.
+We will now go though the steps for removing an instance from config sync groups. In the example here, the main configuration from our config sync group is not compatible with NGINX Open Source and we are going to remove it.
 
 To remove NGINX Open Source from this instance group:
 
