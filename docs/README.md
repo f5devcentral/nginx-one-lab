@@ -527,7 +527,7 @@ Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are tryi
 
 ![URL Append](media/lab5-13.png)
 
-If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to **<https://10.1.1.4/configsync/>**.
+If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to **https://10.1.1.4/configsync/**.
 
 ![NGINX HTTP Redirect Jumphost](media/lab5-14.png)
 
