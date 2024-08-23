@@ -554,7 +554,7 @@ We will not go through the exercise of resolving the configuration such that it 
 ### Removing OR Changing NGINX Instances from Config Sync Group
 
 We will now go though the steps for removing an instance from config sync groups. In the example here, the main configuration from our config sync group is not compatible with NGINX Open Source and we are going to remove it.
-<!-- here is a comment -->
+
 To remove NGINX Open Source from this instance group:
 
 1. Open console access to your NGINX Open Source instance.
