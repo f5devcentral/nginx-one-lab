@@ -521,7 +521,7 @@ We can now confirm the configuration changes on the NGINX instance.
     sudo docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
     ```
 
-Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append `/configsync/` at the end of the browser.
+Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append **/configsync/** at the end of the browser.
 
 ![NGINX HTTP UDF Access](media/lab5-12.png)
 
