@@ -414,7 +414,7 @@ You can now explore your Config Sync Group by selecting your item. After you sel
 
     ![Manual Configuration](media/lab5-4.png)
 
-1. You can also add files by clicking on "Add File" but this limited to `/etc/nginx/`.
+1. You can also add files by clicking on "Add File" but this limited to **/etc/nginx/**.
 
 1. Select "Next" then "Save and Publish"
 
@@ -448,7 +448,7 @@ Lets start by adding an existing NGINX Plus instance.
 
 Now that we added an NGINX instance, lets add another one. But this time, we will add an NGINX Plus container.
 
-The **Linux Jumphost** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
 
 ```bash
 curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
