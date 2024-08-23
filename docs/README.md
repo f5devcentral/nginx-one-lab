@@ -565,7 +565,7 @@ To remove NGINX Open Source from this instance group:
     instance_group: labuser
     ```
 
-    > :point_right: **Note:** You can also move an instance to another config sync group by changing the `instance_group` name.
+    > :point_right: **Note:** You can also move an instance to another config sync group by changing the **instance_group** name.
 
 1. Restart NGINX Agent.
 
