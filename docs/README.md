@@ -436,14 +436,9 @@ Lets start by adding an existing NGINX Plus instance.
 
 1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
 
-1. The next screen might be missing additional options. Run the following commands on your NGINX Plus instance named, `yourname-nginx-plus`.
+1. Follow the instructions on the console of your NGINX Plus instance named, **yourname-nginx-plus**.
 
-    ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install |  DATA_PLANE_KEY="YOUR_DATA_PLANE_KEY" sh -s -- -y -c YOUR_CONFIG_SYNC_GROUP_NAME
-    sudo systemctl restart nginx-agent
-    ```
-
-1. After `nginx-agent` is restarted, you now see your first NGINX instance added to this Config Sync Group.
+1. After the **nginx-agent** is restarted, you now see your first NGINX instance added to this Config Sync Group.
 
     ![First NGINX Instance](media/lab5-6.png)
 
@@ -453,7 +448,7 @@ Lets start by adding an existing NGINX Plus instance.
 
 Now that we added an NGINX instance, lets add another one. But this time, we will add an NGINX Plus container.
 
-The **Linux Jumphost** from the UDF environment has `docker` installed and is setup so it can run an NGINX Plus container image. The container image we will use here is `private-registry.nginx.com/nginx-plus/agent:debian` which has NGINX Plus with the Agent for NGINX One. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
+The **Linux Jumphost** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
 
 ```bash
 curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
@@ -463,7 +458,7 @@ curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR
 
 1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
 
-1. If you saved your Data Plane Key from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+1. If you saved your "Data Plane Key" from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
 
 1. Provide your Data Plane Key if you selected "Use existing Key"
 
@@ -471,11 +466,9 @@ curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR
 
     ![Add New NGINX Plus Container](media/lab5-7.png)
 
-1. Log in to the **Linux Jumphost**. This system already logged in to the NGINX Private Registry so Step 1 can be skipped.
+1. Log in to the console of **Lab Framework** from UDF. This system already pulled the container image "Step 1" and "Step 2" can be skipped.
 
-1. Proceed to Step 2 to pull the container image
-
-1. Then run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+1. Run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
 
 1. Click "Done" to close out the window.
 
@@ -488,13 +481,13 @@ You will now see the second NGINX Plus instance added.
 Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a redirect
 We will now make an update to the configuration defined in the config sync group then publish the change
 
-1. On your COnfig Sync Group, go to the "Configuration" tab.
+1. On your Config Sync Group, go to the "Configuration" tab.
 
 1. Click "Edit Configuration"
 
     ![Edit Configuration](media/lab5-9.png)
 
-1. An editor should now appear. We will want to update `demo.conf` so be sure to click on that file.
+1. An editor should now appear. We will want to update **demo.conf** so be sure to click on that file.
 
     ![Edit File](media/lab5-10.png)
 
@@ -515,13 +508,13 @@ We will now make an update to the configuration defined in the config sync group
 
 We can now confirm the configuration changes on the NGINX instance.
 
-1. On the NGINX Plus component in UDF, you can view the `demo.conf` file by running the following from the console.
+1. On the NGINX Plus component in UDF, you can view the **demo.conf** file by running the following on the console.
 
     ```bash
     cat /etc/nginx/conf.d/demo.conf
     ```
 
-1. On the "Lab Framework" component in UDF, you can view the `demo.conf` file from the NGINX Plus container by running the following.
+1. On the "Lab Framework" component in UDF, you can view the **demo.conf** file from the NGINX Plus container by running the following on the console.
 
     ```bash
     sudo docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
@@ -533,7 +526,7 @@ Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are tryi
 
 ![URL Append](media/lab5-13.png)
 
-If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to `https://10.1.1.4/configsync/`.
+If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to **<https://10.1.1.4/configsync/>**.
 
 ![NGINX HTTP Redirect Jumphost](media/lab5-14.png)
 
@@ -565,7 +558,7 @@ To remove NGINX Open Source from this instance group:
 
 1. Open console access to your NGINX Open Source instance.
 
-1. Open `/var/lib/nginx-agent/agent-dynamic.conf` in a text editor and remove or comment out the following line.
+1. Open **/var/lib/nginx-agent/agent-dynamic.conf** in a text editor and remove or comment out the following line.
 
     ```bash
     instance_group: labuser
