@@ -611,9 +611,9 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 
     ![Confirming the deletion](media/cleanup-5.png)
 
-1. Repeat steps 1-6 for the NGINX Plus instance.
+1. Repeat steps 1-6 for the NGINX Plus instance and the NGINX Plus container instance.
 
-1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Data Plane Keys"
+1. From the NGINX One console, in the left-hand menu in the "Manage" section, select "Data Plane Keys".
 
 1. Select the context menu for the Data Plane Key you created in lab 1, and select "Revoke".
 
@@ -624,5 +624,13 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
 1. Confirm the revocation.
 
     ![Confirming the revocation](media/cleanup-7.png)
+
+1. From the NGINX One console, in the left-hand menu in the Manage section, select "Config Sync Groups".
+
+1. Select the context menu for the Config Sync Group you created in lab 5, and select "Delete".
+
+    ![Delete Config Sync Group](media/cleanup-8.png)
+
+1. Click "Delete" to confirm.
 
 END OF LAB
