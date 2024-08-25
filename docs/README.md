@@ -223,7 +223,7 @@ In this lab, we will leverage NGINX One to enable stub_status in our NGINX insta
     ```
 
 1. You will see that there is a message below the editor: *"1 recommendation found for /etc/nginx/conf.d/demo.conf
-Security - Error: stub_status should have access control list defined"*. Why? NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to all users is considered a security risk. We can remediate this by adding an ACL to the **/nginx_status** location block to only allow the UDF blueprint network and NGINX Agent (running locally on the instance) to access the stub status endpoint.
+Security - Error: stub_status should have access control list defined"*. Why? NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to all users is considered a security risk. We can remediate this by adding an ACL to the **/nginx_status** location block to only allow the lab environment networks and NGINX Agent (running locally on the instance) to access the stub status endpoint.
 
     ![config warning](media/lab3-4.png)
 
@@ -627,5 +627,7 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
     ![Delete Config Sync Group](media/cleanup-8.png)
 
 1. Click "Delete" to confirm.
+
+Go to next part of lab [here](./README2.md)
 
 END OF LAB
