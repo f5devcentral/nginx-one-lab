@@ -1,7 +1,7 @@
 ---
-title: NGINX One Lab
-description: An interactive lab highlighting the NGINX One SaaS Console
-order: 1
+title: NGINX One Console Lab
+description: An interactive lab highlighting the NGINX One Console
+order: 2
 ---
 
 NGINX made big news at the F5 annual user conference, [AppWorld](https://www.f5.com/appworld), by introducing [NGINX One](https://www.nginx.com/introducing-nginx-one/). NGINX One will give all F5 and NGINX customers access to a SaaS console for managing NGINX instances as part of the [F5 Distributed Cloud](https://www.f5.com/cloud). **NGINX One is released for testing in Early Access, and will be GA (Generally Available) in September.**
@@ -18,16 +18,15 @@ With NGINX One, you will get improved:
 
 ## Introduction
 
-This lab will give you an overview of how NGINX One provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX Open Source (OSS).
-
-NGINX One is currently in Early Access, and the implemented feature set is growing all the time. The features and capabilities of the NGINX One offering are expected to continue to grow up to and beyond General Availability.
+This lab will give you an overview of how NGINX One Console provides visibility into a global fleet of NGINX instances, both NGINX Plus and NGINX Open Source (OSS).
 
 After this lab, you will be able to:
 
 - Access and navigate the NGINX One console,
-- Install the NGINX Agent on both NGINX Plus and NGINX OSS instances
-- Manage NGINX configuration, and
+- Manage NGINX configuration
 - Review recommendations from the NGINX One console
+- Setup Config Sync Groups
+- Install the NGINX Agent on both NGINX Plus and NGINX OSS instances (optional)
 
 ## Prerequisites
 
@@ -35,7 +34,7 @@ After this lab, you will be able to:
 
 The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
 
-## Lab 1: Accessing the NGINX One Console
+## Accessing Console
 
 1. Log into your F5 Distributed Cloud Sales tenant.
 
@@ -55,7 +54,7 @@ The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS i
 
     ![NGINX One instance details](media/lab1-4.png)
 
-## Lab 2: Connecting NGINX Plus to NGINX One
+## Connecting to the Console
 
 NGINX One uses an agent installed alongside NGINX to communicate with the NGINX One service.
 
@@ -150,7 +149,7 @@ We have provided a few NGINX instances below for you to use for the remainder of
 
 1. Once the NGINX instances are up and running, press the *Test* button, to confirm the instances are online and responding to HTTP requests.
 
-1. Return to the NGINX One Console. From the left menu in the "Manage" section, click "Instances".
+1. Return to the NGINX One Console. From the left menu in the *Manage* section, click *Instances*.
 
 1. You should see your *<GetVariable name="nginx-plus-1" />* instance in the list. Click a hostname to view the instance details.
 
@@ -160,13 +159,13 @@ We have provided a few NGINX instances below for you to use for the remainder of
 
     ![NGINX Plus instance details](media/lab2-8.png)
 
-## Lab 3: Configuration Suggestions
+## Configuration via the Console
 
-In this lab, we will leverage NGINX One to enable stub_status in our NGINX instances configuration.
+In this lab, we will leverage NGINX One Console to enable stub_status in our <GetVariable name="nginx-plus-1" /> NGINX instance's configuration.
 
 ### Adding a stub_status directive
 
-1. From NGINX One console. From the left menu in the "Manage" section, click "Instances".
+1. In the NGINX One console Select *Manage* and then *Instances* from the left menu.
 
 1. You should see your *<GetVariable name="nginx-plus-1" />* instance in the list. Click its hostname to view the instance details.
 
@@ -178,7 +177,7 @@ In this lab, we will leverage NGINX One to enable stub_status in our NGINX insta
 
     ![Edit Configuration link](media/lab3-2.png)
 
-1. Select the **etc/nginx/conf.d/demo.conf** file from the tree view on the left side of the configuration editor.
+1. Select the **/etc/nginx/conf.d/default.conf** file from the tree view on the left side of the configuration editor.
 
     ![Select demo.conf file](media/lab3-3.png)
 
@@ -195,35 +194,79 @@ In this lab, we will leverage NGINX One to enable stub_status in our NGINX insta
 
     ```nginx
     server {
-        listen 80 default_server;
-        server_name app_server;
+        listen       80 default_server;
+        server_name  localhost;
 
-        root /usr/share/nginx/html;
-        error_log /var/log/nginx/app-server-error.log notice;
-        index demo-index.html index.html;
-        expires -1;
+        #access_log  /var/log/nginx/host.access.log  main;
 
-        sub_filter_once off;
-        sub_filter 'server_hostname' '\$hostname';
-        sub_filter 'server_address' '\$server_addr:\$server_port';
-        sub_filter 'server_url' '\$request_uri';
-        sub_filter 'remote_addr' '\$remote_addr:\$remote_port';
-        sub_filter 'server_date' '\$time_local';
-        sub_filter 'client_browser' '\$http_user_agent';
-        sub_filter 'request_id' '\$request_id';
-        sub_filter 'nginx_version' '\$nginx_version';
-        sub_filter 'document_root' '\$document_root';
-        sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
 
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+
+        # enable /api/ location with appropriate access control in order
+        # to make use of NGINX Plus API
+        #
+        #location /api/ {
+        #    api write=on;
+        #    allow 127.0.0.1;
+        #    deny all;
+        #}
+
+        # enable NGINX Plus Dashboard; requires /api/ location to be
+        # enabled and appropriate access control for remote access
+        #
+        #location = /dashboard.html {
+        #    root /usr/share/nginx/html;
+        #}
+    
         location = /nginx_status {
             stub_status;
             access_log off;
-        }
+        }    
     }
+
     ```
 
-1. You will see that there is a message below the editor: *"1 recommendation found for /etc/nginx/conf.d/demo.conf
-Security - Error: stub_status should have access control list defined"*. Why? NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to all users is considered a security risk. We can remediate this by adding an ACL to the **/nginx_status** location block to only allow the lab environment networks and NGINX Agent (running locally on the instance) to access the stub status endpoint.
+1. You will see that there is a message below the editor: 
+
+    > *1 recommendation found for /etc/nginx/conf.d/demo.conf <br />
+        Security - Error: stub_status should have access control list defined*. 
+
+    - Why? NGINX One includes a configuration advisor and it identified that exposing the **stub_status** endpoint open to the world is considered a security risk. 
+    - We can remediate this by adding an ACL to the **/nginx_status** location block to only allow our lab's local networks and NGINX Agent (running locally on the instance) to access the stub status endpoint.
 
     ![config warning](media/lab3-4.png)
 
@@ -233,7 +276,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
     location /nginx_status {
         stub_status;
         allow 10.0.0.0/8;
-        allow 172.18.0.0/8;
+        allow 172.18.0.0/16;
         allow 127.0.0.1;
         deny all;
     }
@@ -241,17 +284,17 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
     Note that the warning should disappear.
 
-1. Click "Next" to display the diff viewer. This view will show you the changes made to the configuration.
+1. Click *Next* to display the diff viewer. This view will show you the changes made to the configuration.
 
     ![Diff viewer](media/lab3-5.png)
 
-1. Click "Save and Publish". You will see a status message indicating changes are being published, followed by a success message after several seconds.
+1. Click *Save and Publish*. You will see a status message indicating changes are being published, followed by a success message after several seconds.
 
     ![Publish config pending](media/lab3-6.png)
 
     ![Publish config success](media/lab3-7.png)
 
-1. Check that the stub_status module is working.
+1. Check that the stub_status module is working by clicking the *Check* button below.
 
     <APICheck 
         componentName="nginx-plus-1" 
@@ -259,9 +302,9 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
         targetStatusCode={200}  
     />
 
-    ![stub_status page](media/lab3-8.png)
-
 ### Using a TLS certificate
+
+In this section, we will configure our *<GetVariable name="nginx-plus-1" />* NGINX instance to leverage an SSL/TLS certificate. 
 
 1. In the NGINX One Console, edit the "/etc/nginx/conf.d/demo.conf" file again for the *<GetVariable name="nginx-plus-1" />* instance to add the following to the server block:
 
@@ -275,92 +318,134 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
     ```nginx
     server {
-        listen 80 default_server;
-        server_name app_server;
+        listen       80 default_server;
+        server_name  localhost;
 
         listen 443 ssl;
         ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
         ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
 
-        root /usr/share/nginx/html;
-        error_log /var/log/nginx/app-server-error.log notice;
-        index demo-index.html index.html;
-        expires -1;
+        #access_log  /var/log/nginx/host.access.log  main;
 
-        sub_filter_once off;
-        sub_filter 'server_hostname' '\$hostname';
-        sub_filter 'server_address' '\$server_addr:\$server_port';
-        sub_filter 'server_url' '\$request_uri';
-        sub_filter 'remote_addr' '\$remote_addr:\$remote_port';
-        sub_filter 'server_date' '\$time_local';
-        sub_filter 'client_browser' '\$http_user_agent';
-        sub_filter 'request_id' '\$request_id';
-        sub_filter 'nginx_version' '\$nginx_version';
-        sub_filter 'document_root' '\$document_root';
-        sub_filter 'proxied_for_ip' '\$http_x_forwarded_for';
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
 
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+
+        # enable /api/ location with appropriate access control in order
+        # to make use of NGINX Plus API
+        #
+        #location /api/ {
+        #    api write=on;
+        #    allow 127.0.0.1;
+        #    deny all;
+        #}
+
+        # enable NGINX Plus Dashboard; requires /api/ location to be
+        # enabled and appropriate access control for remote access
+        #
+        #location = /dashboard.html {
+        #    root /usr/share/nginx/html;
+        #}
+    
         location = /nginx_status {
             stub_status;
-            allow 10.0.0.0/8;
-            allow 127.0.0.1;
-            deny all;
-        }
+            access_log off;
+        }    
     }
     ```
 
-1. Click "Next" to display the diff viewer. This view will show you the changes made to the configuration.
+1. Click *Next* to display the diff viewer. This view will show you the changes made to the configuration.
 
     ![Diff viewer](media/lab3-9.png)
 
-1. Click "Save and Publish". You will see a status message indicating changes are being published, followed by a success message after several seconds.
+1. Click *Save and Publish*. You will see a status message indicating changes are being published, followed by a success message after several seconds.
 
-1. Click the "Details" link on the page. You should now see the certificate, its validity status, as well as a new recommendation.
+1. Click the *Details* link on the page. You should now see the certificate, its validity status, as well as a new recommendation.
 
     ![Details link](media/lab3-10.png)
 
-1. You can view the configuration, and recommendations, by clicking the "View Configuration" link in the "Configuration Recommendations" section.
+1. You can view the configuration, and recommendations by clicking the *View Configuration* link in the *Configuration Recommendations* section.
 
     ![Certificate status](media/lab3-11.png)
 
-1. Select the "demo.conf" file from the file picker. Note the blue dots and the number "1" next to demo.conf; the configuration viewer highlights the location(s) of any recommendations it has for the NGINX configuration.
+1. Select the *default.conf* file from the file picker. Note the blue dots and the number "1" next to default.conf; the configuration viewer highlights the location(s) of any recommendations it has for the NGINX configuration.
 
     ![Configuration Viewer](media/lab3-12.png)
 
-## Lab 4: Config Sync Group
+## Config Sync Group
 
-We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through using this feature.
+Config Sync Groups allow us to group multiple NGINX instances and leverage an identical configuration across all instances. This feature is extremely helpful in ephemeral environments, such as Docker and Kubernetes, as the NGINX instance can pull it's configuration versus needing to rebuild the NGINX container every time the configuration changes. This section will go through using this feature.
 
 ### Creating Config Sync Group
 
-1. Go to the NGINX One console.
+1. Go to the NGINX One Console.
 
-1. From the left menu in the "Manage" section, click on "Config Sync Groups".
+1. From the left menu in the *Manage* section, click on *Config Sync Groups*.
 
-1. Click on "Add Config Sync Group".
+1. Click on *Add Config Sync Group*.
 
     ![Add Config Sync Group](media/lab5-1.png)
 
-1. On the right, enter your unique lab deployment name, *<GetVariable name="petname" />*, then select "Create" on the bottom. Your new item is now created.
+1. On the right, enter your unique lab deployment name, *<GetVariable name="petname" />*, then select *Create* on the bottom. Your new Config Sync Group is now created.
 
     ![New Config Sync Group](media/lab5-2.png)
 
-You can now explore your Config Sync Group by selecting your item. After you select it, there are two tabs named "Details" and "Configuration". The configuration defined in this group will be used as the one NGINX config to use for all NGINX instances in this group. Notice this is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
+You can now explore your Config Sync Group by selecting *<GetVariable name="petname" />* from the list. 
+After you select it, there are two tabs named *Details* and *Configuration*. 
+The configuration defined in this group will be used as the single NGINX config to use for all NGINX instances in this group. 
+
+Notice the configuration is empty when you first create a Config Sync Group. There are two ways to handle the initial configuration.
 
 **Option 1:** When you add the first NGINX instance, the config from the NGINX instance will be used as the config for your Config Sync Group. We will be using this option for this lab.
 
 **Option 2.** You can manually define it before you add any NGINX instances.
 
-1. Click the "Configuration" tab then click on "Edit Configuration"
+> **Note**: the 4 steps below are for reference only and are not required for the lab.
 
-    ![Manually Create Initial Configuration](media/lab5-3.png)
+    1. Click the *Configuration* tab then click on *Edit Configuration*
 
-1. An editor window appears that allows you to define the configuration to use for the NGINX instances.
+        ![Manually Create Initial Configuration](media/lab5-3.png)
 
-    ![Manual Configuration](media/lab5-4.png)
+    1. An editor window appears that allows you to define the configuration to use for the NGINX instances.
 
-1. You can also add files by clicking on "Add File" but this is limited to **/etc/nginx/**.
+        ![Manual Configuration](media/lab5-4.png)
 
-1. Select "Next" then "Save and Publish"
+    1. You can also add files by clicking on *Add File* but this is limited to the **/etc/nginx/** path.
+
+    1. Select *Next* then *Save and Publish*
 
 This lab will proceed with option 1 where the configuration will be auto-generated using the first NGINX instance added to this group.
 
@@ -374,11 +459,11 @@ Lets start by adding an existing NGINX Plus instance.
 
 1. Open up your config sync group.
 
-1. Click on "Add Instance to Config Sync Group".
+1. Click on *Add Instance to Config Sync Group*.
 
     ![Add Existing Instance](media/lab5-5.png)
 
-1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
+1. We will be using an existing NGINX instance so make sure *Add an existing instance to config sync group* is selected then click *Next*.
 
 1. Follow the instructions on the console of your NGINX Plus instance named, **<GetVariable name="nginx-plus-1" />**.
 
@@ -386,7 +471,7 @@ Lets start by adding an existing NGINX Plus instance.
 
     ![First NGINX Instance](media/lab5-6.png)
 
-1. When you select the "Configuration" tab, notice the config here is the same as the config on the NGINX instance we just added.
+1. When you select the *Configuration* tab, notice the config here is the same as the config on the NGINX instance we just added.
 
 #### Adding second NGINX Plus instance
 
@@ -398,26 +483,104 @@ TODO: Write this when N1 is back up and accessible
 
 ### Updating and publishing configuration
 
-Now that we have two instances in a Config Sync Group. Lets now try to publish a new configuration to all instances. Lets try to create a new URL that returns a plain text.
+Now that we have two instances in a Config Sync Group. Lets publish a new configuration to all instances that creates a new URL that returns an HTML response.
 
 We will be making an update to the configuration defined in the config sync group then publish the change
 
-1. On your Config Sync Group, go to the "Configuration" tab.
+1. In your *<GetVariable name="petname" />* Config Sync Group, go to the *Configuration* tab.
 
-1. Click "Edit Configuration"
+1. Click *Edit Configuration*
 
     ![Edit Configuration](media/lab5-9.png)
 
-1. An editor should now appear. We will want to update **demo.conf** so be sure to click on that file.
+1. An editor should now appear. We will want to update **default.conf** so be sure to click on that file.
 
     ![Edit File](media/lab5-10.png)
 
-1. Add the following section to the **server** block then click "Next"
+1. Add the following section to the **server** block then click *Next*
 
     ```bash
-    location /configsync/ {
+    location /configsync {
         default_type text/html;
-        return 200 '<h1>Published change made from NGINX One Config Sync Group</h1>';
+        return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
+    }
+    ```
+
+    The entire file should now look as follows:
+
+    ```nginx
+    server {
+        listen       80 default_server;
+        server_name  localhost;
+
+        listen 443 ssl;
+        ssl_certificate /etc/nginx/ssl/wildcard.f5demos.com.crt.pem;
+        ssl_certificate_key /etc/nginx/ssl/wildcard.f5demos.com.key.pem;
+
+        #access_log  /var/log/nginx/host.access.log  main;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+
+        # enable /api/ location with appropriate access control in order
+        # to make use of NGINX Plus API
+        #
+        #location /api/ {
+        #    api write=on;
+        #    allow 127.0.0.1;
+        #    deny all;
+        #}
+
+        # enable NGINX Plus Dashboard; requires /api/ location to be
+        # enabled and appropriate access control for remote access
+        #
+        #location = /dashboard.html {
+        #    root /usr/share/nginx/html;
+        #}
+    
+        location = /nginx_status {
+            stub_status;
+            access_log off;
+        }
+
+        location /configsync {
+        default_type text/html;
+        return 200 '<html><body><h1>Published change made from NGINX One Config Sync Group</h1></body></html>';
+        }    
     }
     ```
 
@@ -425,39 +588,31 @@ We will be making an update to the configuration defined in the config sync grou
 
     ![Confirm Edits](media/lab5-11.png)
 
-1. Confirm your changes and click "Save and Publish"
+1. Confirm your changes and click *Save and Publish*.
 
-We can now confirm the configuration changes on the NGINX instance.
+We can now confirm the configuration changes on the NGINX instance by clicking the *Check* button for each NGINX instance below:
 
-1. On the NGINX Plus component in UDF, you can view the **demo.conf** file by running the following on the console.
-
-    ```bash
-    cat /etc/nginx/conf.d/demo.conf
-    ```
-
-1. On the "Lab Framework" component in UDF, you can view the **demo.conf** file from the NGINX Plus container by running the following on the console.
-
-    ```bash
-    sudo docker exec NGINX_CONTAINER_NAME cat /etc/nginx/conf.d/demo.conf
-    ```
-
-Lets now confirm the behavior on the NGINX Plus instance in UDF. If you are trying to access it through UDF using NGINX HTTP, you can append **/configsync/** at the end of the browser.
-
-![NGINX HTTP UDF Access](media/lab5-12.png)
-
-![URL Append](media/lab5-13.png)
-
-If you are RDP'd into the **Linux Jumphost**, you can confirm the behavior by opening Chromium and navigating to **https://10.1.1.4/configsync/**.
-
-![NGINX HTTP Redirect Jumphost](media/lab5-14.png)
+    <APIResponseCheck 
+        componentName="nginx-plus-1" 
+        path="/configsync" 
+        searchString="Config Sync Group"
+        targetStatusCode={200}  
+    />
+    <APIResponseCheck 
+        componentName="nginx-plus-2" 
+        path="/configsync" 
+        searchString="Config Sync Group"
+        targetStatusCode={200}  
+    />
 
 ### Mixing NGINX Plus and NGINX Open Source Instances
 
-You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible with for both instances. For example, you will not be able to publish NGINX Plus unique config to NGINX Open Source.
+You will be able to mix NGINX Plus and NGINX Open Source instances with the exception that the configuration must be compatible across NGINX OSS and NGINX PLus. 
+For example, you will not be able to publish NGINX Plus unique configurations like [JWT authenticate](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-jwt-authentication/) to NGINX Open Source.
 
-When you view details from NGINX Open Source, there will be an error message that show this. The status of the NGINX Open Source instance will be "Out of Sync".
+> **Note:** When you view details from an NGINX Open Source instance, there will be an error message that indicates thee status of the NGINX Open Source instance will be "Out of Sync". This will be resolved in an upcoming release.
 
-We will now show how this works in this section of the lab.
+We will now go through the steps of adding an NGINX OSS instance to your existing Config Sync Group:
 
 1. Add your NGINX Open Source instance to your config sync group by repeating instructions from [Adding existing instance](#adding-existing-instance) that you did for NGINX Plus.
 
@@ -503,7 +658,7 @@ But if you delete it on that screen, you will also notice the NGINX instance is 
 
 ![Deleted Instance](media/lab5-18.png)
 
-## Lab 5: NGINX OSS (Optional)
+## NGINX OSS (Optional)
 
 NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX Open Source instances. The UDF blueprint contains a second Ubuntu host with the package maintainer’s version of NGINX installed.
 
@@ -549,7 +704,7 @@ NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX O
 
     Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
 
-## Lab 6: NGINX Docker (Optional)
+## NGINX Docker (Optional)
 
 The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
 
@@ -627,7 +782,5 @@ Time to clean up the resources you created in this lab. As a safety precaution, 
     ![Delete Config Sync Group](media/cleanup-8.png)
 
 1. Click "Delete" to confirm.
-
-Go to next part of lab [here](./README2.md)
 
 END OF LAB
