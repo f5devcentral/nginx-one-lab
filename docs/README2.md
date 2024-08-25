@@ -1,6 +1,6 @@
 ---
-title: NGINX One Lab
-description: An interactive lab highlighting the NGINX One SaaS Console
+title: NGINX One Lab (continued)
+description: An continued interactive lab highlighting the NGINX One SaaS Console
 order: 2
 ---
 
