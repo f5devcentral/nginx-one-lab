@@ -1,14 +1,10 @@
 ---
 title: NGINX One Lab
 description: An interactive lab highlighting the NGINX One SaaS Console
-order: 1
+order: 2
 ---
 
-# NGINX One
-
 NGINX made big news at the F5 annual user conference, [AppWorld](https://www.f5.com/appworld), by introducing [NGINX One](https://www.nginx.com/introducing-nginx-one/). NGINX One will give all F5 and NGINX customers access to a SaaS console for managing NGINX instances as part of the [F5 Distributed Cloud](https://www.f5.com/cloud). **NGINX One is released for testing in Early Access, and will be GA (Generally Available) in September.**
-
-We’re excited to share that the NGINX One Early Access Program is available to you today! You can sign up here to participate: [https://www.nginx.com/nginx-one-early-participant-access/](https://www.nginx.com/nginx-one-early-participant-access/)
 
 Once live, NGINX One will give NGINX users unrivaled visibility, delivery and optimization capabilities combined with the speed and flexibility of the F5 Distributed Cloud Platform.
 
@@ -35,10 +31,6 @@ After this lab, you will be able to:
 
 ## Prerequisites
 
-### F5 Distributed Cloud Access
-
-You will use your existing F5 XC Sales tenant to complete this lab. If you do not have access to F5 XC, work with your SE team to get onboarded.
-
 ### UDF Blueprint
 
 The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS instances that you will use during this lab. You should be comfortable accessing resources in UDF using SSH.
@@ -63,12 +55,6 @@ The "NGINX One Enablement Lab" blueprint contains the NGINX Plus and NGINX OSS i
 
     ![NGINX One instance details](media/lab1-4.png)
 
-1. Review the following demo for an overview of the types of data and findings available from the NGINX One Dashboard:
-
-    [Vivun Demo Automation - NGINX One](https://app.revel.vivun.com/demos/13885df7-5333-4182-8d57-fcba3d0cbd28/paths/4be83a03-f942-4eb2-80db-174046d15e0c)
-
-    > :point_right: **Note:** You may experience rendering issues viewing the demo on a smaller screen. Try maximizing your browser window if you experience any issues.
-
 ## Lab 2: Connecting NGINX Plus to NGINX One
 
 NGINX One uses an agent installed alongside NGINX to communicate with the NGINX One service.
@@ -77,49 +63,17 @@ NGINX One uses an agent installed alongside NGINX to communicate with the NGINX 
 
 The agent uses a Data Plane Key to authenticate and identify itself to NGINX One. In this lab we will create a new Data Plane Key, and use it to install the NGINX Agent on the NGINX Plus instance.
 
-### Connecting to the lab environment
-
-The requirements for this lab are minimal. If you prefer working directly from your workstation, you can SSH directly into the lab machines. If you would rather work from a jumphost, that option is available as well.
-
-#### Option 1: Direct access
-
-1. Navigate to the "Components" tab in UDF.
-
-1. Under the "Systems" column, find the system you want to connect to and drop down the "Access Methods" option.
-
-1. Click the "SSH (47000)" option. If your computer is configured with a handler for the SSH protocol, your SSH client should open automatically.
-
-#### Option 2: Jumphost
-
-1. Navigate to the "Components" tab in UDF.
-
-1. Under the "Systems" column, find the "Linux Jumphost" system and drop down the "Access Methods" option.
-
-1. Click the "RDP" option. Depending on your computer’s configuration, either your RDP Client will open automatically, or it will download an .rdp file and you will need to double-click it to connect.
-
-1. Log into the jumphost with the username **"user"** and password **"user"**.
-
-    ![Jumphost login](media/lab2-2.png)
-
-1. Click the "Terminal Emulator" icon in the dock to open a terminal.
-
-1. Enter the following command, substituting **ip-address** with the address of the system you are connecting to.
-
-    ```bash
-    ssh ubuntu@ip-address
-    ```
-
-    ![Jumphost screenshot](media/lab2-3.png)
-
 ### Generating a Data Plane Key
 
 1. From the NGINX One console, in the left hand menu under the "Manage" section, select "Data Plane Keys".
 
 1. Click "Add Data Plane Key".
 
-1. Give the key a name. Other users in your tenant will see this object, so be sure to name it in a way that identifies it as yours. A suggested format is "yourname-nginx-key".
+1. Give the key a name based on your lab's ephemeral name, such as *<GetVariable name="petname" />-nginx-key*. 
 
-    > :point_right: **Note:** You are working in a shared tenant; keep track of your resources, and be careful not to accidently modify anyone else's.
+    > :point_right: **Note:** You are working in a shared tenant; keep track of your resources, and be careful not to accidentally modify anyone else's.
+
+1. By default, the key expiration date will be set to 1 year.  Depending on your use case, you may want to set a shorter expiration date.  For this lab, we will use the default value.
 
 1. Click "Generate"
 
@@ -131,41 +85,74 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
     ![Data Plane Key](media/lab2-5.png)
 
-### Installing NGINX Agent on NGINX Plus
+1. Now enter the Data Plane Key in the *Set Variable* component below and click the *Save* button; this will allow the lab guide to use the key in further steps.
 
-1. Connect to the "NGINX Plus" instance in UDF, either directly through SSH or through the jumphost. If connecting through the jumphost, the SSH command will be:
+    <InputVariable 
+        name="NGINX_AGENT_SERVER_TOKEN"
+    />
 
-    ```bash
-    ssh ubuntu@10.1.1.4
-    ```
+### Deploy NGINX Containers
 
-1. Because the hostname is used as the instance's name in NGINX One, you should change it to something that that identifies the host belongs to you. Ensure that you are working on the NGINX Plus instance (default hostname ip-10-1-1-4), and run the following command, substituting "yourname" with a string that identifies you as the user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue showing the previous hostname until you log out and log back in. This does not affect the lab.
+Now that we have a data plane key, we can attach NGINX instances to the NGINX One Console.
 
-    ```bash
-    sudo hostnamectl set-hostname yourname-nginx-plus
-    ```
+We have provided a few NGINX instances below for you to use for the remainder of this lab.  This lab will focus more on the NGINX One Console and less on how to install NGINX Agent on your NGINX instance and connect the instance to NGINX One.  If this is something you would like to explore in greater depth, check out the optional labs at the end of this lab guide.
 
-    > :point_right: **Note:** If you don't change the hostname, it will appear as **ip-10-1-1-4** in the console, along with everybody else who didn't change the hostname, and you won't be able to easily identify your instance later.
+1. To start your NGINX instances for this lab, click the *Run* button for each NGINX instances to deploy them and have them automatically connect to the NGINX One Console:
 
-1. Observe the running NGINX instance on this machine.
+    <DockerContainer>
+        <Docker 
+            name="nginx-plus-1" 
+            desc="NGINX Plus R32 with Agent." 
+            image="private-registry.nginx.com/nginx-plus/agent:debian" 
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            ]}
+            attrs={[
+                { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            ]}
+        />
+        <Docker 
+            name="nginx-plus-2" 
+            desc="NGINX Plus R32 with Agent." 
+            image="private-registry.nginx.com/nginx-plus/agent:debian" 
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            ]}
+            attrs={[
+                { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            ]}
+        />
 
-    1. If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.4**
+        <Docker 
+            name="nginx-oss-agent"
+            desc="NGINX OSS 1.27.1 with NGINX Agent."
+            image="private-registry-test.nginx.com/nginx/agent:1.27.1-alpine"
+            env={[
+                {name: "NGINX_AGENT_SERVER_GRPCPORT", value: "443"},
+                {name: "NGINX_AGENT_SERVER_HOST", value: "agent.connect.nginx.com"},
+                {name: "NGINX_AGENT_TLS_ENABLE", value: "true"},
+                {name: "NGINX_AGENT_TLS_SKIP_VERIFY", value: "false"},
+                {name: "NGINX_AGENT_SERVER_TOKEN", isVariable: true, isSecret: true},
+            ]}
+            attrs={[
+                { name: "volume", value: "/tmp/ssl:/etc/nginx/ssl" }
+            ]}
+        />
+    </DockerContainer>
 
-    2. If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method.
+1. Once the NGINX instances are up and running, press the *Test* button, to confirm the instances are online and responding to HTTP requests.
 
-    ![NGINX Plus demo page ](media/lab2-6.png)
+1. Return to the NGINX One Console. From the left menu in the "Manage" section, click "Instances".
 
-1. From the NGINX Plus instance, run the following command to install the NGINX Agent. Substitute "data-plane-key" with the key you saved in step 5. Make sure you are working on the NGINX Plus instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to step 1 and create a new Data Plane Key.
-
-    ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
-    ```
-
-    The install script will install any necessary dependencies and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning for the moment.
-
-1. Return to the NGINX One console. From the left menu in the "Manage" section, click "Instances".
-
-1. You should see your new instance in the list. Click its hostname to view the instance details.
+1. You should see your *<GetVariable name="nginx-plus-1" />* instance in the list. Click a hostname to view the instance details.
 
     ![NGINX One Instance List](media/lab2-7.png)
 
@@ -175,13 +162,13 @@ The requirements for this lab are minimal. If you prefer working directly from y
 
 ## Lab 3: Configuration Suggestions
 
-In the previous lab, the NGINX Agent installer provided a warning that there was no stub_status found in the NGINX config. We’ll make that change on the NGINX Plus instance, and see the change reflected in NGINX One.
+In this lab, we will leverage NGINX One to enable stub_status in our NGINX instances configuration.
 
 ### Adding a stub_status directive
 
 1. From NGINX One console. From the left menu in the "Manage" section, click "Instances".
 
-1. You should see your instance in the list. Click its hostname to view the instance details. You may already have been there from the previous lab.
+1. You should see your *<GetVariable name="nginx-plus-1" />* instance in the list. Click its hostname to view the instance details.
 
 1. Click the "Configuration" link near the top of the instance screen. You will be presented with the configuration editor.
 
@@ -246,6 +233,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
     location /nginx_status {
         stub_status;
         allow 10.0.0.0/8;
+        allow 172.18.0.0/8;
         allow 127.0.0.1;
         deny all;
     }
@@ -265,15 +253,17 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
 1. Check that the stub_status module is working.
 
-    - If you are working through the jumphost, open Chromium and navigate to **http://10.1.1.4/nginx_status**
-
-    - If you are connecting directly through UDF, locate the "NGINX Plus" component and select the "NGINX HTTP" access method. Append "/nginx_status" to the end of the address.
+    <APICheck 
+        componentName="nginx-plus-1" 
+        path="/nginx_status" 
+        targetStatusCode={200}  
+    />
 
     ![stub_status page](media/lab3-8.png)
 
 ### Using a TLS certificate
 
-1. In the NGINX One console, edit the "/etc/nginx/conf.d/demo.conf" file again to add the following to the server block:
+1. In the NGINX One Console, edit the "/etc/nginx/conf.d/demo.conf" file again for the *<GetVariable name="nginx-plus-1" />* instance to add the following to the server block:
 
     ```nginx
     listen 443 ssl;
@@ -336,53 +326,7 @@ Security - Error: stub_status should have access control list defined"*. Why? NG
 
     ![Configuration Viewer](media/lab3-12.png)
 
-## Lab 4: NGINX OSS
-
-NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX Open Source instances. The UDF blueprint contains a second Ubuntu host with the package maintainer’s version of NGINX installed.
-
-### Installing NGINX Agent on NGINX OSS
-
-1. Connect to the "NGINX OSS" instance in UDF, either directly through SSH or through the jumphost. If connecting through the jumphost, the SSH command will be:
-
-    ```bash
-    ssh ubuntu@10.1.1.6
-    ```
-
-1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting "yourname" with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
-
-    ```bash
-    sudo hostnamectl set-hostname yourname-nginx-oss
-    ```
-
-1. Observe the running NGINX instance on this machine.
-
-    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
-
-    - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
-
-    ![NGINX OSS Demo page](media/lab4-1.png)
-
-1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
-
-    ```bash
-    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
-    ```
-
-    The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning.
-
-1. Return to the NGINX One console. From the left menu in the "Manage" section, click "Instances". You should see your new instance in the list.
-
-1. Click its hostname to view the instance details.
-
-    ![Instance list](media/lab4-2.png)
-
-1. Explore the instance details.
-
-    ![Instance Details](media/lab4-3.png)
-
-    Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
-
-## Lab 5: Config Sync Group
+## Lab 4: Config Sync Group
 
 We can group multiple NGINX instances into a Config Sync Group where all instances within this group use an identical configuration. This lab will go through using this feature.
 
@@ -396,7 +340,7 @@ We can group multiple NGINX instances into a Config Sync Group where all instanc
 
     ![Add Config Sync Group](media/lab5-1.png)
 
-1. On the right, provide a name then select "Create" on the bottom. Your new item is now created.
+1. On the right, enter your unique lab deployment name, *<GetVariable name="petname" />*, then select "Create" on the bottom. Your new item is now created.
 
     ![New Config Sync Group](media/lab5-2.png)
 
@@ -414,7 +358,7 @@ You can now explore your Config Sync Group by selecting your item. After you sel
 
     ![Manual Configuration](media/lab5-4.png)
 
-1. You can also add files by clicking on "Add File" but this limited to **/etc/nginx/**.
+1. You can also add files by clicking on "Add File" but this is limited to **/etc/nginx/**.
 
 1. Select "Next" then "Save and Publish"
 
@@ -436,7 +380,7 @@ Lets start by adding an existing NGINX Plus instance.
 
 1. We will be using an existing NGINX instance so make sure "Add an existing instance to config sync group" is selected then click "Next".
 
-1. Follow the instructions on the console of your NGINX Plus instance named, **yourname-nginx-plus**.
+1. Follow the instructions on the console of your NGINX Plus instance named, **<GetVariable name="nginx-plus-1" />**.
 
 1. After the **nginx-agent** is restarted, you now see your first NGINX instance added to this Config Sync Group.
 
@@ -444,35 +388,11 @@ Lets start by adding an existing NGINX Plus instance.
 
 1. When you select the "Configuration" tab, notice the config here is the same as the config on the NGINX instance we just added.
 
-#### Adding new instance using NGINX Plus container
+#### Adding second NGINX Plus instance
 
-Now that we added an NGINX instance, lets add another one. But this time, we will add an NGINX Plus container.
+Now that we added our first NGINX Plus instance, lets add our second NGINX Plus instance, <GetVariable name="nginx-plus-2" />, to the Config Sync Group.
 
-The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
-
-```bash
-curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
-```
-
-1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
-
-1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
-
-1. If you saved your "Data Plane Key" from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
-
-1. Provide your Data Plane Key if you selected "Use existing Key"
-
-1. Select the "Docker Container" tab.
-
-    ![Add New NGINX Plus Container](media/lab5-7.png)
-
-1. Log in to the console of **Lab Framework** from UDF. This system already pulled the container image "Step 1" and "Step 2" can be skipped.
-
-1. Run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
-
-1. Click "Done" to close out the window.
-
-You will now see the second NGINX Plus instance added.
+TODO: Write this when N1 is back up and accessible
 
 ![Added Second NGINX Plus Instance](media/lab5-8.png)
 
@@ -582,6 +502,80 @@ The screenshot below show the "Details" screen from the config sync group. It ap
 But if you delete it on that screen, you will also notice the NGINX instance is no longer managed by NGINX One.
 
 ![Deleted Instance](media/lab5-18.png)
+
+## Lab 5: NGINX OSS (Optional)
+
+NGINX Agent isn’t limited to NGINX Plus; it can also be installed into NGINX Open Source instances. The UDF blueprint contains a second Ubuntu host with the package maintainer’s version of NGINX installed.
+
+### Installing NGINX Agent on NGINX OSS
+
+1. Connect to the "NGINX OSS" instance in UDF, either directly through SSH or through the jumphost. If connecting through the jumphost, the SSH command will be:
+
+    ```bash
+    ssh ubuntu@10.1.1.6
+    ```
+
+1. Because the hostname is used as the name of the instance in NGINX One, you should change the hostname to something that identifies it as yours. Ensure that you are working on the NGINX OSS instance (default hostname ip-10.1.1.6), and run the following command, substituting "yourname" with a string that identifies you as a user. Use only lowercase characters and hyphens. Note that the bash prompt will not update immediately; it will continue to show the previous hostname unless you log out and log back in. This does not affect the lab.
+
+    ```bash
+    sudo hostnamectl set-hostname yourname-nginx-oss
+    ```
+
+1. Observe the running NGINX instance on this machine.
+
+    - If you are working from the jumphost, open the Chromium browser and navigate to **http://10.1.1.6/**
+
+    - If you are connecting directly through UDF, locate the "NGINX OSS" component and select the "NGINX HTTP" access method.
+
+    ![NGINX OSS Demo page](media/lab4-1.png)
+
+1. From the NGINX OSS instance, run the following command to install the NGINX Agent. Substitute data-plane-key with the key you saved in the first lab. Make sure you are working on the NGINX OSS instance; if you accidentally install on the jumphost, the installation will succeed, but there will be no NGINX instance for the agent to connect to and the instance will appear as "Offline". If this occurs, return to the directions in lab 1 to create a new Data Plane Key.
+
+    ```bash
+    curl https://agent.connect.nginx.com/nginx-agent/install | DATA_PLANE_KEY='data-plane-key' sh -s -- -y
+    ```
+
+    The install script will install any necessary dependencies, and install the NGINX Agent with the appropriate settings for your system. You will see a warning about "stub_status" not being configured. You can ignore that warning.
+
+1. Return to the NGINX One console. From the left menu in the "Manage" section, click "Instances". You should see your new instance in the list.
+
+1. Click its hostname to view the instance details.
+
+    ![Instance list](media/lab4-2.png)
+
+1. Explore the instance details.
+
+    ![Instance Details](media/lab4-3.png)
+
+    Note that this instance has a different set of configuration recommendations than the vanilla NGINX Plus instance did. Package maintainers may ship NGINX with their own sets of defaults, which may or may not align with best practices. NGINX One provides a centralized view of such recommendations across the organization.
+
+## Lab 6: NGINX Docker (Optional)
+
+The **Lab Framework** from the UDF environment has **docker** installed and is setup so it can run an NGINX Plus container image. The container image we will use here is **private-registry.nginx.com/nginx-plus/agent:debian** which has NGINX Plus with the Agent. If you want to see a list of all NGINX Plus with Agent tags, run the command below.
+
+```bash
+curl https://private-registry.nginx.com/v2/nginx-plus/agent/tags/list --key YOUR_NGINX_PLUS_KEY --cert YOUR_NGINX_PLUS_CERT
+```
+
+1. Go to the "Details" page of your Config Sync Group then click "Add Instance to Config Sync Group"
+
+1. Select "Register a new instance with NGINX One then add to config sync group" then click "Next"
+
+1. If you saved your "Data Plane Key" from a previous lab, select "Use existing Key". Otherwise select "Generate new key"
+
+1. Provide your Data Plane Key if you selected "Use existing Key"
+
+1. Select the "Docker Container" tab.
+
+    ![Add New NGINX Plus Container](media/lab5-7.png)
+
+1. Log in to the console of **Lab Framework** from UDF. This system already pulled the container image "Step 1" and "Step 2" can be skipped.
+
+1. Run the command from Step 3 to start the NGINX Plus with Agent container. This command will also add this NGINX instance to your Config Sync Group.
+
+1. Click "Done" to close out the window.
+
+You will now see the second NGINX Plus instance added.
 
 ## Lab Cleanup
 
